@@ -1,12 +1,21 @@
 {
-  "name": "draft-monorepo",
-  "private": true,
-  "version": "0.1.0",
-  "workspaces": ["apps/*"],
-  "engines": {
-    "node": ">=20"
-  },
-  "scripts": {
-    "test": "echo \"No tests\" && exit 0"
-  }
+	"name": "draft-monorepo",
+	"private": true,
+	"version": "0.1.0",
+	"workspaces": ["apps/*"],
+	"engines": {
+		"node": ">=20"
+	},
+	"scripts": {
+		"test": "echo \"No tests\" && exit 0",
+		"lint": "biome check .",
+		"format": "biome format . --write",
+		"typecheck": "tsc --noEmit",
+		"build": "npm run build -w @draft/discord-todo-bot"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.7.0",
+		"@types/node": "^20.0.0",
+		"@typescript/native-preview": "^7.0.0-dev.20250904.1"
+	}
 }
