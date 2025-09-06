@@ -1,0 +1,12 @@
+{
+  "name": "draft-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/*"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "echo \"No tests\" && exit 0"
+  }
+}
