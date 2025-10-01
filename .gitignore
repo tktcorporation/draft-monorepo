@@ -3,5 +3,5 @@ node_modules/
 dist/
 apps/**/dist/
 
-# Claude Code
-.claude/
+# Claude Code local settings
+.claude/settings.local.json
