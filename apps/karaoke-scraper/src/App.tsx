@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Search, TrendingUp, Music, Award } from 'lucide-react';
+import { Search, TrendingUp, Music, Award, ArrowUpDown } from 'lucide-react';
 
 interface KaraokeScore {
   songName: string;
   artist: string;
   score: number;
+  date?: string;
+  scoringType: string;
 }
 
 type SortKey = keyof KaraokeScore;
@@ -89,184 +91,217 @@ function App() {
     }
   }
 
-  function getScoreClass(score: number): string {
-    if (score >= 90) return 'excellent';
-    if (score >= 80) return 'good';
-    if (score >= 70) return 'average';
-    return 'poor';
-  }
-
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <Card className="bg-white/95 backdrop-blur">
-          <CardContent className="pt-6">
-            <div className="text-center text-muted-foreground">読み込み中...</div>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-background p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-muted-foreground">読み込み中...</div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <Card className="bg-white/95 backdrop-blur">
-          <CardContent className="pt-6">
-            <div className="text-center text-muted-foreground">
-              {error}<br />
-              <code className="text-sm">npm run scrape</code> を実行してデータを取得してください。
+      <div className="min-h-screen bg-background p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center space-y-2">
+              <p className="text-muted-foreground">{error}</p>
+              <p className="text-sm text-muted-foreground">
+                <code className="px-2 py-1 bg-muted rounded text-xs">npm run scrape</code> を実行してデータを取得してください
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-4xl font-bold text-white flex items-center justify-center gap-3">
-          <Music className="w-10 h-10" />
-          カラオケ採点履歴
-        </h1>
-      </div>
-
-      <Card className="bg-white/95 backdrop-blur">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="曲名または歌手名で検索..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+    <div className="min-h-screen bg-background">
+      <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
+        {/* Header */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Music className="w-6 h-6 text-accent" />
             </div>
-            <select
-              className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              value={minScore}
-              onChange={(e) => setMinScore(Number(e.target.value))}
-            >
-              <option value="0">すべての点数</option>
-              <option value="90">90点以上</option>
-              <option value="85">85点以上</option>
-              <option value="80">80点以上</option>
-              <option value="75">75点以上</option>
-              <option value="70">70点以上</option>
-            </select>
+            <h1 className="text-3xl font-semibold tracking-tight">カラオケ採点履歴</h1>
           </div>
-        </CardContent>
-      </Card>
+          <p className="text-sm text-muted-foreground">
+            全{allScores.length}曲の採点データ
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-purple-500 to-purple-700 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90 flex items-center gap-2">
-              <Music className="w-4 h-4" />
-              総曲数
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.totalSongs}</p>
-          </CardContent>
-        </Card>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-6">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">総曲数</p>
+                  <p className="text-3xl font-semibold tracking-tight">{stats.totalSongs}</p>
+                </div>
+                <div className="p-2 bg-blue-50 rounded-lg">
+                  <Music className="w-5 h-5 text-blue-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-blue-700 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              平均点
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.avgScore}</p>
-          </CardContent>
-        </Card>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-6">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">平均点</p>
+                  <p className="text-3xl font-semibold tracking-tight">{stats.avgScore}</p>
+                </div>
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card className="bg-gradient-to-br from-green-500 to-green-700 text-white">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium opacity-90 flex items-center gap-2">
-              <Award className="w-4 h-4" />
-              最高点
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{stats.maxScore}</p>
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-6">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">最高点</p>
+                  <p className="text-3xl font-semibold tracking-tight">{stats.maxScore}</p>
+                </div>
+                <div className="p-2 bg-green-50 rounded-lg">
+                  <Award className="w-5 h-5 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      <Card className="bg-white/95 backdrop-blur">
-        <CardContent className="pt-6">
-          {filteredAndSortedScores.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              検索条件に一致するデータがありません
+        {/* Search and Filter */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row gap-3">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  className="w-full pl-9 pr-4 py-2.5 bg-background border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 transition-all"
+                  placeholder="曲名または歌手名で検索"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <select
+                className="px-4 py-2.5 bg-background border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0 transition-all cursor-pointer"
+                value={minScore}
+                onChange={(e) => setMinScore(Number(e.target.value))}
+              >
+                <option value="0">すべての点数</option>
+                <option value="90">90点以上</option>
+                <option value="85">85点以上</option>
+                <option value="80">80点以上</option>
+                <option value="75">75点以上</option>
+                <option value="70">70点以上</option>
+              </select>
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th
-                      className="text-left p-4 cursor-pointer hover:bg-muted/50 select-none"
-                      onClick={() => handleSort('songName')}
-                    >
-                      曲名{' '}
-                      <span className="text-xs ml-1">
-                        {sortKey === 'songName' && (sortDirection === 'asc' ? '▲' : '▼')}
-                      </span>
-                    </th>
-                    <th
-                      className="text-left p-4 cursor-pointer hover:bg-muted/50 select-none"
-                      onClick={() => handleSort('artist')}
-                    >
-                      歌手名{' '}
-                      <span className="text-xs ml-1">
-                        {sortKey === 'artist' && (sortDirection === 'asc' ? '▲' : '▼')}
-                      </span>
-                    </th>
-                    <th
-                      className="text-left p-4 cursor-pointer hover:bg-muted/50 select-none"
-                      onClick={() => handleSort('score')}
-                    >
-                      点数{' '}
-                      <span className="text-xs ml-1">
-                        {sortKey === 'score' && (sortDirection === 'asc' ? '▲' : '▼')}
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredAndSortedScores.map((score, index) => (
-                    <tr key={index} className="border-b hover:bg-muted/50">
-                      <td className="p-4">{score.songName}</td>
-                      <td className="p-4">{score.artist}</td>
-                      <td className="p-4">
-                        <span
-                          className={`font-bold text-lg ${
-                            score.score >= 90
-                              ? 'text-green-600'
-                              : score.score >= 80
-                              ? 'text-blue-600'
-                              : score.score >= 70
-                              ? 'text-yellow-600'
-                              : 'text-red-600'
-                          }`}
-                        >
-                          {score.score.toFixed(1)}
-                        </span>
-                      </td>
+          </CardContent>
+        </Card>
+
+        {/* Table */}
+        <Card className="border-0 shadow-sm">
+          <CardContent className="p-0">
+            {filteredAndSortedScores.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground text-sm">
+                検索条件に一致するデータがありません
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th
+                        className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+                        onClick={() => handleSort('songName')}
+                      >
+                        <div className="flex items-center gap-2">
+                          曲名
+                          <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+                          {sortKey === 'songName' && (
+                            <span className="text-xs">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                          )}
+                        </div>
+                      </th>
+                      <th
+                        className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+                        onClick={() => handleSort('artist')}
+                      >
+                        <div className="flex items-center gap-2">
+                          歌手名
+                          <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+                          {sortKey === 'artist' && (
+                            <span className="text-xs">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                          )}
+                        </div>
+                      </th>
+                      <th
+                        className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+                        onClick={() => handleSort('score')}
+                      >
+                        <div className="flex items-center justify-end gap-2">
+                          点数
+                          <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+                          {sortKey === 'score' && (
+                            <span className="text-xs">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                          )}
+                        </div>
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {filteredAndSortedScores.map((score, index) => (
+                      <tr
+                        key={index}
+                        className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
+                      >
+                        <td className="px-6 py-4 text-sm font-medium">{score.songName}</td>
+                        <td className="px-6 py-4 text-sm text-muted-foreground">{score.artist}</td>
+                        <td className="px-6 py-4 text-right">
+                          <span
+                            className={`inline-flex items-center justify-center min-w-[60px] px-3 py-1 rounded-md text-sm font-semibold ${
+                              score.score >= 90
+                                ? 'bg-green-50 text-green-700'
+                                : score.score >= 85
+                                ? 'bg-blue-50 text-blue-700'
+                                : score.score >= 80
+                                ? 'bg-purple-50 text-purple-700'
+                                : score.score >= 75
+                                ? 'bg-yellow-50 text-yellow-700'
+                                : 'bg-gray-50 text-gray-700'
+                            }`}
+                          >
+                            {score.score.toFixed(1)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center text-xs text-muted-foreground pb-4">
+          {filteredAndSortedScores.length > 0 && (
+            <p>{filteredAndSortedScores.length}件の結果を表示中</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

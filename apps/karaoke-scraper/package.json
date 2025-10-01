@@ -6,7 +6,8 @@
     "scrape": "tsx scraper.ts",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npx wrangler pages deploy dist"
   },
   "dependencies": {
     "playwright": "^1.48.0",
