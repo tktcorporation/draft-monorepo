@@ -1,0 +1,18 @@
+[tools]
+node = "{{ exec(command='jq -r .engines.node package.json') | default(value='lts') }}"
+uv = "latest"
+
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@openai/codex" = "latest"
+
+"npm:@antfu/ni" = "latest"
+
+
+[settings]
+experimental = true
+
+# ディレクトリ移動時に自動的にツールをインストール
+auto_install = true
+
+# pipx バックエンドで uvx を使う設定
+pipx.uvx = true

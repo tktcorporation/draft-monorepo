@@ -4,7 +4,7 @@
 	"version": "0.1.0",
 	"workspaces": ["apps/*"],
 	"engines": {
-		"node": ">=20"
+		"node": "24"
 	},
 	"scripts": {
 		"test": "echo \"No tests\" && exit 0",
