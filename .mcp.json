@@ -1,15 +1,15 @@
 {
-  "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--headless",
-        "--executablePath",
-        "/workspaces/draft-monorepo/chromium-wrapper.sh",
-        "--isolated"
-      ]
-    }
-  }
+	"mcpServers": {
+		"chrome-devtools": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"chrome-devtools-mcp@latest",
+				"--headless",
+				"--executablePath",
+				"/workspaces/draft-monorepo/chromium-wrapper.sh",
+				"--isolated"
+			]
+		}
+	}
 }

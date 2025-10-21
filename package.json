@@ -4,18 +4,24 @@
 	"version": "0.1.0",
 	"workspaces": ["apps/*"],
 	"engines": {
-		"node": "24"
+		"node": ">=22"
 	},
 	"scripts": {
 		"test": "echo \"No tests\" && exit 0",
 		"lint": "biome check .",
 		"format": "biome format . --write",
 		"typecheck": "tsc --noEmit",
-		"build": "npm run build -w @draft/discord-todo-bot"
+		"build": "npm run build -w @draft/discord-todo-bot",
+		"prepare": "node -e \"process.env.CI ? process.exit(0) : require('child_process').execSync('simple-git-hooks', {stdio: 'inherit'})\""
+	},
+	"simple-git-hooks": {
+		"pre-push": "npm run lint && npm run typecheck"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.0",
 		"@types/node": "^20.0.0",
-		"@typescript/native-preview": "^7.0.0-dev.20250904.1"
+		"@typescript/native-preview": "^7.0.0-dev.20250904.1",
+		"simple-git-hooks": "^2.13.1",
+		"typescript": "^5.9.3"
 	}
 }
