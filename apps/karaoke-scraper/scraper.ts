@@ -7,15 +7,15 @@ import "dotenv/config";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CLUB_DAM_ID = process.env.CLUB_DAM_ID;
-const CLUB_DAM_PASS = process.env.CLUB_DAM_PASS;
-
-if (!CLUB_DAM_ID || !CLUB_DAM_PASS) {
+if (!process.env.CLUB_DAM_ID || !process.env.CLUB_DAM_PASS) {
 	console.error(
 		"Error: CLUB_DAM_ID and CLUB_DAM_PASS environment variables are required",
 	);
 	process.exit(1);
 }
+
+const CLUB_DAM_ID: string = process.env.CLUB_DAM_ID;
+const CLUB_DAM_PASS: string = process.env.CLUB_DAM_PASS;
 
 interface KaraokeScore {
 	songName: string;

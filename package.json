@@ -2,7 +2,9 @@
 	"name": "draft-monorepo",
 	"private": true,
 	"version": "0.1.0",
-	"workspaces": ["apps/*"],
+	"workspaces": [
+		"apps/*"
+	],
 	"engines": {
 		"node": "24"
 	},
@@ -16,6 +18,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.0",
 		"@types/node": "^20.0.0",
-		"@typescript/native-preview": "^7.0.0-dev.20250904.1"
+		"@typescript/native-preview": "^7.0.0-dev.20250904.1",
+		"typescript": "^5.9.3"
 	}
 }
