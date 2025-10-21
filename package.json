@@ -11,12 +11,17 @@
 		"lint": "biome check .",
 		"format": "biome format . --write",
 		"typecheck": "tsc --noEmit",
-		"build": "npm run build -w @draft/discord-todo-bot"
+		"build": "npm run build -w @draft/discord-todo-bot",
+		"postinstall": "simple-git-hooks"
+	},
+	"simple-git-hooks": {
+		"pre-push": "npm run lint && npm run typecheck"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.0",
 		"@types/node": "^20.0.0",
 		"@typescript/native-preview": "^7.0.0-dev.20250904.1",
+		"simple-git-hooks": "^2.13.1",
 		"typescript": "^5.9.3"
 	}
 }
