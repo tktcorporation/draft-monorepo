@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"scrape": "tsx scraper.ts",
+		"scrape:full": "tsx scraper.ts --full",
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
