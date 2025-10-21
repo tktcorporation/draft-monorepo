@@ -86,4 +86,4 @@ The project includes Model Context Protocol (MCP) integration:
 
 ## Node Version
 
-Node 24 is required (specified in root package.json engines).
+Node.js 22 or higher is required (specified in root package.json engines).

@@ -4,7 +4,7 @@
 	"version": "0.1.0",
 	"workspaces": ["apps/*"],
 	"engines": {
-		"node": "24"
+		"node": ">=22"
 	},
 	"scripts": {
 		"test": "echo \"No tests\" && exit 0",
@@ -12,7 +12,7 @@
 		"format": "biome format . --write",
 		"typecheck": "tsc --noEmit",
 		"build": "npm run build -w @draft/discord-todo-bot",
-		"postinstall": "simple-git-hooks"
+		"prepare": "simple-git-hooks"
 	},
 	"simple-git-hooks": {
 		"pre-push": "npm run lint && npm run typecheck"
