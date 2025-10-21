@@ -7,6 +7,11 @@ import "dotenv/config";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// コマンドライン引数をチェックして、フルスクレーピングモードかどうかを判定
+// --full フラグがある場合: 全ページをスクレイピング（既存データも含めて）
+// --full フラグがない場合（デフォルト）: 既存データに達したらスクレーピングを停止
+const fullScrape = process.argv.includes("--full");
+
 if (!process.env.CLUB_DAM_ID || !process.env.CLUB_DAM_PASS) {
 	console.error(
 		"Error: CLUB_DAM_ID and CLUB_DAM_PASS environment variables are required",
@@ -56,7 +61,39 @@ async function scrapeKaraokeScores(): Promise<KaraokeScore[]> {
 		console.log("Login successful!");
 		const allScores: KaraokeScore[] = [];
 
-		// List of scoring types to check
+		// インクリメンタルスクレーピングのために、既存のスコアデータを読み込む
+		const outputPath = path.join(__dirname, "scores.json");
+		let existingScores: KaraokeScore[] = [];
+
+		// 重複判定のためのユニークキー生成関数
+		// 同じ曲名、アーティスト、日時、採点タイプの組み合わせを持つスコアは同一とみなす
+		// 例: "青と夏(生音)||Mrs. GREEN APPLE||2025/08/02 20:53||精密採点Ai"
+		const getUniqueKey = (score: KaraokeScore) =>
+			`${score.songName}||${score.artist}||${score.date}||${score.scoringType}`;
+
+		try {
+			const existingData = await fs.readFile(outputPath, "utf-8");
+			existingScores = JSON.parse(existingData);
+			console.log(`\nLoaded ${existingScores.length} existing scores`);
+		} catch (error) {
+			console.log("\nNo existing scores found, will scrape all pages");
+		}
+
+		// 既存スコアのユニークキーをSetに変換（高速な重複チェックのため）
+		// Setを使うことで O(1) の検索時間で重複を判定できる
+		const existingKeys = new Set(existingScores.map(getUniqueKey));
+
+		// スクレーピングモードをログ出力
+		if (fullScrape) {
+			console.log("Running in FULL mode - will scrape all pages\n");
+		} else {
+			console.log(
+				"Running in INCREMENTAL mode - will stop when reaching existing data\n",
+			);
+		}
+
+		// スクレーピング対象の採点タイプリスト
+		// DAM TOOMでは複数の採点モードがあり、それぞれ別のタブで表示される
 		const scoringTypes = [
 			{ id: "DamHistoryMarkingAi", name: "精密採点Ai" },
 			{ id: "DamHistoryMarkingHearts", name: "精密採点Ai Heart" },
@@ -178,6 +215,28 @@ async function scrapeKaraokeScores(): Promise<KaraokeScore[]> {
 					);
 
 					console.log(`Found ${scores.length} scores on page ${pageNum}`);
+
+					// インクリメンタルモードの場合、早期終了判定を行う
+					// このページのすべてのスコアが既存データに含まれている場合、
+					// それ以降のページも既存データである可能性が高いため、スクレーピングを停止する
+					if (!fullScrape && scores.length > 0) {
+						// このページの新規スコアをフィルタリング
+						const newScoresOnPage = scores.filter(
+							(score) => !existingKeys.has(getUniqueKey(score)),
+						);
+
+						// 新規スコアが1つもない場合、早期終了
+						if (newScoresOnPage.length === 0) {
+							console.log(
+								"All scores on this page already exist. Stopping scrape.",
+							);
+							allScores.push(...scores);
+							break; // 早期終了: 以降のページのスクレーピングをスキップ
+						}
+
+						console.log(`${newScoresOnPage.length} new scores on this page`);
+					}
+
 					allScores.push(...scores);
 				}
 
@@ -196,31 +255,15 @@ async function scrapeKaraokeScores(): Promise<KaraokeScore[]> {
 			return [];
 		}
 
-		// Load existing scores for differential update
-		const outputPath = path.join(__dirname, "scores.json");
-		let existingScores: KaraokeScore[] = [];
-
-		try {
-			const existingData = await fs.readFile(outputPath, "utf-8");
-			existingScores = JSON.parse(existingData);
-			console.log(`\nLoaded ${existingScores.length} existing scores`);
-		} catch (error) {
-			console.log("\nNo existing scores found, creating new file");
-		}
-
-		// Merge new scores with existing scores (avoid duplicates)
-		// Create a unique key from songName + artist + date
-		const getUniqueKey = (score: KaraokeScore) =>
-			`${score.songName}||${score.artist}||${score.date}||${score.scoringType}`;
-
-		const existingKeys = new Set(existingScores.map(getUniqueKey));
+		// スクレーピングしたスコアから、既存データと重複しないものだけを抽出
+		// これにより、同じスコアが複数回保存されることを防ぐ
 		const newScores = allScores.filter(
 			(score) => !existingKeys.has(getUniqueKey(score)),
 		);
 
 		console.log(`Found ${newScores.length} new scores to add`);
 
-		// Combine existing and new scores
+		// 既存スコアと新規スコアを結合
 		const combinedScores = [...existingScores, ...newScores];
 
 		// Sort by score (descending)
