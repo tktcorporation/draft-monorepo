@@ -1,6 +1,4 @@
 {
-  "enabledMcpjsonServers": [
-    "chrome-devtools"
-  ],
-  "enableAllProjectMcpServers": true
+	"enabledMcpjsonServers": ["chrome-devtools"],
+	"enableAllProjectMcpServers": true
 }
