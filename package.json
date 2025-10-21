@@ -2,9 +2,7 @@
 	"name": "draft-monorepo",
 	"private": true,
 	"version": "0.1.0",
-	"workspaces": [
-		"apps/*"
-	],
+	"workspaces": ["apps/*"],
 	"engines": {
 		"node": "24"
 	},
