@@ -1,5 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowUpDown, Award, Music, Search, TrendingUp } from "lucide-react";
+import {
+	ArrowUpDown,
+	Award,
+	Music,
+	Search,
+	TrendingUp,
+	Users,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 interface KaraokeScore {
@@ -10,8 +17,18 @@ interface KaraokeScore {
 	scoringType: string;
 }
 
+interface ArtistStats {
+	artist: string;
+	songCount: number;
+	avgScore: number;
+	maxScore: number;
+	minScore: number;
+}
+
 type SortKey = keyof KaraokeScore;
 type SortDirection = "asc" | "desc";
+type ViewMode = "songs" | "artists";
+type ArtistSortKey = keyof ArtistStats;
 
 function App() {
 	const [allScores, setAllScores] = useState<KaraokeScore[]>([]);
@@ -21,6 +38,10 @@ function App() {
 	const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [viewMode, setViewMode] = useState<ViewMode>("songs");
+	const [artistSortKey, setArtistSortKey] = useState<ArtistSortKey>("avgScore");
+	const [artistSortDirection, setArtistSortDirection] =
+		useState<SortDirection>("desc");
 
 	useEffect(() => {
 		loadScores();
@@ -87,12 +108,67 @@ function App() {
 		return { totalSongs, avgScore, maxScore };
 	}, [filteredAndSortedScores]);
 
+	const artistStats = useMemo(() => {
+		const statsMap = new Map<string, ArtistStats>();
+
+		for (const score of allScores) {
+			const existing = statsMap.get(score.artist);
+			if (existing) {
+				existing.songCount++;
+				existing.avgScore += score.score;
+				existing.maxScore = Math.max(existing.maxScore, score.score);
+				existing.minScore = Math.min(existing.minScore, score.score);
+			} else {
+				statsMap.set(score.artist, {
+					artist: score.artist,
+					songCount: 1,
+					avgScore: score.score,
+					maxScore: score.score,
+					minScore: score.score,
+				});
+			}
+		}
+
+		// Calculate average
+		const statsArray = Array.from(statsMap.values()).map((stat) => ({
+			...stat,
+			avgScore: stat.avgScore / stat.songCount,
+		}));
+
+		// Sort
+		statsArray.sort((a, b) => {
+			const aVal = a[artistSortKey];
+			const bVal = b[artistSortKey];
+
+			if (typeof aVal === "number" && typeof bVal === "number") {
+				return artistSortDirection === "asc" ? aVal - bVal : bVal - aVal;
+			}
+
+			const aStr = String(aVal).toLowerCase();
+			const bStr = String(bVal).toLowerCase();
+			const comparison = aStr.localeCompare(bStr, "ja");
+
+			return artistSortDirection === "asc" ? comparison : -comparison;
+		});
+
+		return statsArray;
+	}, [allScores, artistSortKey, artistSortDirection]);
+
 	function handleSort(key: SortKey) {
 		if (sortKey === key) {
 			setSortDirection(sortDirection === "asc" ? "desc" : "asc");
 		} else {
 			setSortKey(key);
 			setSortDirection(key === "score" ? "desc" : "asc");
+		}
+	}
+
+	function handleArtistSort(key: ArtistSortKey) {
+		if (artistSortKey === key) {
+			setArtistSortDirection(artistSortDirection === "asc" ? "desc" : "asc");
+		} else {
+			setArtistSortKey(key);
+			setArtistSortDirection(key === "artist" ? "asc" : "desc");
 		}
 	}
 
@@ -144,6 +220,34 @@ function App() {
 					<p className="text-sm text-muted-foreground">
 						全{allScores.length}曲の採点データ
 					</p>
+				</div>
+
+				{/* View Mode Toggle */}
+				<div className="flex gap-2">
+					<button
+						type="button"
+						onClick={() => setViewMode("songs")}
+						className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+							viewMode === "songs"
+								? "bg-accent text-accent-foreground shadow-sm"
+								: "bg-muted/50 text-muted-foreground hover:bg-muted"
+						}`}
+					>
+						<Music className="w-4 h-4" />
+						曲リスト
+					</button>
+					<button
+						type="button"
+						onClick={() => setViewMode("artists")}
+						className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+							viewMode === "artists"
+								? "bg-accent text-accent-foreground shadow-sm"
+								: "bg-muted/50 text-muted-foreground hover:bg-muted"
+						}`}
+					>
+						<Users className="w-4 h-4" />
+						アーティスト統計
+					</button>
 				</div>
 
 				{/* Stats Cards */}
@@ -236,10 +340,113 @@ function App() {
 				{/* Table */}
 				<Card className="border-0 shadow-sm">
 					<CardContent className="p-0">
-						{filteredAndSortedScores.length === 0 ? (
-							<div className="text-center py-12 text-muted-foreground text-sm">
-								検索条件に一致するデータがありません
-							</div>
+						{viewMode === "songs" ? (
+							filteredAndSortedScores.length === 0 ? (
+								<div className="text-center py-12 text-muted-foreground text-sm">
+									検索条件に一致するデータがありません
+								</div>
+							) : (
+								<div className="overflow-x-auto">
+									<table className="w-full">
+										<thead>
+											<tr className="border-b border-border">
+												<th
+													className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+													onClick={() => handleSort("songName")}
+													onKeyDown={(e) => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															handleSort("songName");
+														}
+													}}
+												>
+													<div className="flex items-center gap-2">
+														曲名
+														<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+														{sortKey === "songName" && (
+															<span className="text-xs">
+																{sortDirection === "asc" ? "↑" : "↓"}
+															</span>
+														)}
+													</div>
+												</th>
+												<th
+													className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+													onClick={() => handleSort("artist")}
+													onKeyDown={(e) => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															handleSort("artist");
+														}
+													}}
+												>
+													<div className="flex items-center gap-2">
+														歌手名
+														<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+														{sortKey === "artist" && (
+															<span className="text-xs">
+																{sortDirection === "asc" ? "↑" : "↓"}
+															</span>
+														)}
+													</div>
+												</th>
+												<th
+													className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+													onClick={() => handleSort("score")}
+													onKeyDown={(e) => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															handleSort("score");
+														}
+													}}
+												>
+													<div className="flex items-center justify-end gap-2">
+														点数
+														<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+														{sortKey === "score" && (
+															<span className="text-xs">
+																{sortDirection === "asc" ? "↑" : "↓"}
+															</span>
+														)}
+													</div>
+												</th>
+											</tr>
+										</thead>
+										<tbody>
+											{filteredAndSortedScores.map((score) => (
+												<tr
+													key={`${score.songName}-${score.artist}-${score.date}-${score.score}`}
+													className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
+												>
+													<td className="px-6 py-4 text-sm font-medium">
+														{score.songName}
+													</td>
+													<td className="px-6 py-4 text-sm text-muted-foreground">
+														{score.artist}
+													</td>
+													<td className="px-6 py-4 text-right">
+														<span
+															className={`inline-flex items-center justify-center min-w-[60px] px-3 py-1 rounded-md text-sm font-semibold ${
+																score.score >= 90
+																	? "bg-green-50 text-green-700"
+																	: score.score >= 85
+																		? "bg-blue-50 text-blue-700"
+																		: score.score >= 80
+																			? "bg-purple-50 text-purple-700"
+																			: score.score >= 75
+																				? "bg-yellow-50 text-yellow-700"
+																				: "bg-gray-50 text-gray-700"
+															}`}
+														>
+															{score.score.toFixed(1)}
+														</span>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							)
 						) : (
 							<div className="overflow-x-auto">
 								<table className="w-full">
@@ -247,60 +454,100 @@ function App() {
 										<tr className="border-b border-border">
 											<th
 												className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
-												onClick={() => handleSort("songName")}
+												onClick={() => handleArtistSort("artist")}
 												onKeyDown={(e) => {
 													if (e.key === "Enter" || e.key === " ") {
 														e.preventDefault();
-														handleSort("songName");
+														handleArtistSort("artist");
 													}
 												}}
 											>
 												<div className="flex items-center gap-2">
-													曲名
+													アーティスト
 													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-													{sortKey === "songName" && (
+													{artistSortKey === "artist" && (
 														<span className="text-xs">
-															{sortDirection === "asc" ? "↑" : "↓"}
-														</span>
-													)}
-												</div>
-											</th>
-											<th
-												className="text-left px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
-												onClick={() => handleSort("artist")}
-												onKeyDown={(e) => {
-													if (e.key === "Enter" || e.key === " ") {
-														e.preventDefault();
-														handleSort("artist");
-													}
-												}}
-											>
-												<div className="flex items-center gap-2">
-													歌手名
-													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-													{sortKey === "artist" && (
-														<span className="text-xs">
-															{sortDirection === "asc" ? "↑" : "↓"}
+															{artistSortDirection === "asc" ? "↑" : "↓"}
 														</span>
 													)}
 												</div>
 											</th>
 											<th
 												className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
-												onClick={() => handleSort("score")}
+												onClick={() => handleArtistSort("songCount")}
 												onKeyDown={(e) => {
 													if (e.key === "Enter" || e.key === " ") {
 														e.preventDefault();
-														handleSort("score");
+														handleArtistSort("songCount");
 													}
 												}}
 											>
 												<div className="flex items-center justify-end gap-2">
-													点数
+													曲数
 													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-													{sortKey === "score" && (
+													{artistSortKey === "songCount" && (
 														<span className="text-xs">
-															{sortDirection === "asc" ? "↑" : "↓"}
+															{artistSortDirection === "asc" ? "↑" : "↓"}
+														</span>
+													)}
+												</div>
+											</th>
+											<th
+												className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+												onClick={() => handleArtistSort("avgScore")}
+												onKeyDown={(e) => {
+													if (e.key === "Enter" || e.key === " ") {
+														e.preventDefault();
+														handleArtistSort("avgScore");
+													}
+												}}
+											>
+												<div className="flex items-center justify-end gap-2">
+													平均点
+													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+													{artistSortKey === "avgScore" && (
+														<span className="text-xs">
+															{artistSortDirection === "asc" ? "↑" : "↓"}
+														</span>
+													)}
+												</div>
+											</th>
+											<th
+												className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+												onClick={() => handleArtistSort("maxScore")}
+												onKeyDown={(e) => {
+													if (e.key === "Enter" || e.key === " ") {
+														e.preventDefault();
+														handleArtistSort("maxScore");
+													}
+												}}
+											>
+												<div className="flex items-center justify-end gap-2">
+													最高点
+													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+													{artistSortKey === "maxScore" && (
+														<span className="text-xs">
+															{artistSortDirection === "asc" ? "↑" : "↓"}
+														</span>
+													)}
+												</div>
+											</th>
+											<th
+												className="text-right px-6 py-4 font-medium text-sm text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors select-none group"
+												onClick={() => handleArtistSort("minScore")}
+												onKeyDown={(e) => {
+													if (e.key === "Enter" || e.key === " ") {
+														e.preventDefault();
+														handleArtistSort("minScore");
+													}
+												}}
+											>
+												<div className="flex items-center justify-end gap-2">
+													最低点
+													<ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+													{artistSortKey === "minScore" && (
+														<span className="text-xs">
+															{artistSortDirection === "asc" ? "↑" : "↓"}
 														</span>
 													)}
 												</div>
@@ -308,33 +555,39 @@ function App() {
 										</tr>
 									</thead>
 									<tbody>
-										{filteredAndSortedScores.map((score) => (
+										{artistStats.map((stat) => (
 											<tr
-												key={`${score.songName}-${score.artist}-${score.date}-${score.score}`}
+												key={stat.artist}
 												className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
 											>
 												<td className="px-6 py-4 text-sm font-medium">
-													{score.songName}
+													{stat.artist}
 												</td>
-												<td className="px-6 py-4 text-sm text-muted-foreground">
-													{score.artist}
+												<td className="px-6 py-4 text-right text-sm text-muted-foreground">
+													{stat.songCount}
 												</td>
 												<td className="px-6 py-4 text-right">
 													<span
 														className={`inline-flex items-center justify-center min-w-[60px] px-3 py-1 rounded-md text-sm font-semibold ${
-															score.score >= 90
+															stat.avgScore >= 90
 																? "bg-green-50 text-green-700"
-																: score.score >= 85
+																: stat.avgScore >= 85
 																	? "bg-blue-50 text-blue-700"
-																	: score.score >= 80
+																	: stat.avgScore >= 80
 																		? "bg-purple-50 text-purple-700"
-																		: score.score >= 75
+																		: stat.avgScore >= 75
 																			? "bg-yellow-50 text-yellow-700"
 																			: "bg-gray-50 text-gray-700"
 														}`}
 													>
-														{score.score.toFixed(1)}
+														{stat.avgScore.toFixed(1)}
 													</span>
+												</td>
+												<td className="px-6 py-4 text-right text-sm text-muted-foreground">
+													{stat.maxScore.toFixed(1)}
+												</td>
+												<td className="px-6 py-4 text-right text-sm text-muted-foreground">
+													{stat.minScore.toFixed(1)}
 												</td>
 											</tr>
 										))}
@@ -347,8 +600,12 @@ function App() {
 
 				{/* Footer */}
 				<div className="text-center text-xs text-muted-foreground pb-4">
-					{filteredAndSortedScores.length > 0 && (
-						<p>{filteredAndSortedScores.length}件の結果を表示中</p>
+					{viewMode === "songs" ? (
+						filteredAndSortedScores.length > 0 && (
+							<p>{filteredAndSortedScores.length}件の結果を表示中</p>
+						)
+					) : (
+						<p>{artistStats.length}人のアーティストを表示中</p>
 					)}
 				</div>
 			</div>
