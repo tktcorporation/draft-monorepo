@@ -1,5 +1,5 @@
 [tools]
-node = "{{ exec(command='jq -r .engines.node package.json') | default(value='lts') }}"
+node = "lts"
 uv = "latest"
 
 "npm:@anthropic-ai/claude-code" = "latest"
