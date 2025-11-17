@@ -94,6 +94,28 @@ apps/karaoke-scraper/
 └── package.json
 ```
 
+## 自動更新（GitHub Actions）
+
+このプロジェクトは、GitHub Actionsによる週次自動更新に対応しています。
+
+### セットアップ
+
+1. GitHubリポジトリの Settings > Secrets and variables > Actions に移動
+2. 以下のSecretsを追加：
+   - `CLUB_DAM_ID`: DAM TOMOのID
+   - `CLUB_DAM_PASS`: DAM TOMOのパスワード
+
+### 実行スケジュール
+
+- **自動実行**: 毎週日曜日 午前9時（UTC）/ 午後6時（JST）
+- **手動実行**: Actions タブから「Update Karaoke Scores」ワークフローを選択して「Run workflow」
+
+### 動作
+
+1. スクレーパーが最新のカラオケデータを取得
+2. 新規スコアがある場合、自動的にPRを作成
+3. PRをレビュー・マージすることでデータを更新
+
 ## トラブルシューティング
 
 ### データが取得できない
@@ -114,7 +136,7 @@ apps/karaoke-scraper/
 - [ ] より多くの採点機種に対応
 - [ ] グラフ表示機能（点数の分布など）
 - [ ] データベースへの保存
-- [ ] 定期的な自動更新
+- [x] 定期的な自動更新（GitHub Actions実装済み）
 
 ## ライセンス
 

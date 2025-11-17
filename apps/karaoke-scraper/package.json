@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"type": "module",
 	"scripts": {
+		"install-playwright": "npx playwright install && npx playwright install-deps",
 		"scrape": "tsx scraper.ts",
 		"scrape:full": "tsx scraper.ts --full",
 		"dev": "vite",
