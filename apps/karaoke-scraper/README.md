@@ -6,7 +6,7 @@ DAM TOMOから精密採点AIなどのカラオケ採点データを取得し、W
 
 - **スクレイピング**: DAM TOMOサイトから採点履歴を自動取得
 - **データ保存**: JSON形式でローカルに保存（曲名、歌手名、点数）
-- **Webアプリ**: React + Tailwind CSS v4 + shadcn/uiで構築
+- **Webアプリ**: React + Tailwind CSS v4 + [json-render](https://github.com/vercel-labs/json-render) で構築（UIをJSON specとして宣言的に記述）
 - **検索機能**: 曲名・歌手名でリアルタイム検索
 - **フィルタリング**: 点数による絞り込み（90点以上、85点以上など）
 - **ソート機能**: 曲名、歌手名、点数でソート可能
@@ -68,9 +68,10 @@ npm run dev
 
 ## 技術スタック
 
-- **スクレイピング**: Puppeteer
-- **フロントエンド**: React 18 + TypeScript
-- **スタイリング**: Tailwind CSS v4 + shadcn/ui
+- **スクレイピング**: Playwright
+- **フロントエンド**: React 19 + TypeScript
+- **UI記述**: [json-render](https://github.com/vercel-labs/json-render)（`@json-render/core` + `@json-render/react`）でカタログ・レジストリ・JSON specを定義
+- **スタイリング**: Tailwind CSS v4
 - **ビルドツール**: Vite
 - **実行環境**: tsx (TypeScript実行)
 
@@ -79,12 +80,12 @@ npm run dev
 ```
 apps/karaoke-scraper/
 ├── src/
-│   ├── components/
-│   │   └── ui/
-│   │       └── card.tsx       # shadcn/ui Card component
-│   ├── lib/
-│   │   └── utils.ts           # Tailwind merge utility
-│   ├── App.tsx                # メインアプリケーション
+│   ├── ui/
+│   │   ├── catalog.ts         # json-render カタログ（利用可能なコンポーネント定義）
+│   │   ├── registry.tsx       # 各コンポーネントのReact実装
+│   │   ├── functions.ts       # $computed 用の派生データ関数（絞り込み・集計）
+│   │   └── spec.ts            # UI全体を表すJSON spec
+│   ├── App.tsx                # ストア・データ取得・Renderer の配線
 │   ├── main.tsx               # Reactエントリーポイント
 │   └── index.css              # Tailwind CSS設定
 ├── scraper.ts                 # スクレイピングスクリプト
