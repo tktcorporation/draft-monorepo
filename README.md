@@ -46,6 +46,7 @@ mise trust            # Trust the .mise.toml config
 ```
 apps/
   karaoke-scraper/    # Karaoke score scraper and viewer
+  travel-search/      # Saved hotel search context (data only)
 ```
 
 Add new experiments as separate apps in the `apps/` directory.

@@ -37,7 +37,9 @@ mise trust       # Trust the .mise.toml configuration
 This is an npm workspaces monorepo:
 - Root package manages shared tooling (Biome for linting/formatting, TypeScript for type checking)
 - `apps/*` contains individual experiment workspaces
-- Currently contains: `@draft/karaoke-scraper` - a karaoke score scraper with a Vite viewer deployed to Cloudflare Pages
+- Currently contains:
+  - `@draft/karaoke-scraper` - a karaoke score scraper with a Vite viewer, deployed to Cloudflare Pages by hand with `npm run deploy -w @draft/karaoke-scraper`
+  - `apps/travel-search` - a saved hotel search context (`search-context.json`), data only and not an npm workspace
 - New experiments should be added as separate apps in `apps/` directory
 
 ## Commands
@@ -53,6 +55,8 @@ npm run build          # Build every workspace that defines a build script
 ### Workspace-specific commands
 ```bash
 npm run build -w @draft/karaoke-scraper    # Build a specific workspace
+npm run dev -w @draft/karaoke-scraper      # Start the karaoke viewer dev server
+npm run scrape -w @draft/karaoke-scraper   # Scrape karaoke scores
 ```
 
 ## Architecture
@@ -60,7 +64,7 @@ npm run build -w @draft/karaoke-scraper    # Build a specific workspace
 ### TypeScript Configuration
 - Root `tsconfig.json` sets base compiler options (ES2022, ESNext modules, strict mode)
 - Workspace tsconfigs extend root config
-- Target: ES2022, Module: ESNext with node resolution
+- Target: ES2022, Module: ESNext with bundler resolution
 
 ### MCP Integration
 The project includes Model Context Protocol (MCP) integration:
