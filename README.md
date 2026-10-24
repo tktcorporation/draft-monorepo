@@ -45,7 +45,8 @@ mise trust            # Trust the .mise.toml config
 
 ```
 apps/
-  discord-bot/        # Discord TODO bot experiment
+  karaoke-scraper/    # Karaoke score scraper and viewer
+  travel-search/      # Saved hotel search context (data only)
 ```
 
 Add new experiments as separate apps in the `apps/` directory.

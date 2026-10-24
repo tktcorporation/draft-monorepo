@@ -37,7 +37,9 @@ mise trust       # Trust the .mise.toml configuration
 This is an npm workspaces monorepo:
 - Root package manages shared tooling (Biome for linting/formatting, TypeScript for type checking)
 - `apps/*` contains individual experiment workspaces
-- Currently contains: `@draft/discord-todo-bot` - a Discord bot for managing TODO lists
+- Currently contains:
+  - `@draft/karaoke-scraper` - a karaoke score scraper with a Vite viewer, deployed to Cloudflare Pages by hand with `npm run deploy -w @draft/karaoke-scraper`
+  - `apps/travel-search` - a saved hotel search context (`search-context.json`), data only and not an npm workspace
 - New experiments should be added as separate apps in `apps/` directory
 
 ## Commands
@@ -47,36 +49,22 @@ This is an npm workspaces monorepo:
 npm run lint           # Run Biome linter
 npm run format         # Format code with Biome
 npm run typecheck      # Type check all TypeScript files
-npm run build          # Build the discord-todo-bot
+npm run build          # Build every workspace that defines a build script
 ```
 
 ### Workspace-specific commands
 ```bash
-npm run build -w @draft/discord-todo-bot    # Build specific workspace
-npm run start -w @draft/discord-todo-bot    # Run the Discord bot
-```
-
-### Discord bot commands
-The Discord bot must be built before running:
-```bash
-cd apps/discord-bot
-npm run build    # Compile TypeScript to dist/
-npm run start    # Run the compiled bot
+npm run build -w @draft/karaoke-scraper    # Build a specific workspace
+npm run dev -w @draft/karaoke-scraper      # Start the karaoke viewer dev server
+npm run scrape -w @draft/karaoke-scraper   # Scrape karaoke scores
 ```
 
 ## Architecture
 
-### Discord Bot (`@draft/discord-todo-bot`)
-- Single-file bot implementation in `apps/discord-bot/index.ts`
-- Uses discord.js v14 with message intents
-- In-memory TODO storage per user (not persistent)
-- Bot commands: `!todo add <task>`, `!todo list`
-- Requires `DISCORD_BOT_TOKEN` environment variable in `.env`
-
 ### TypeScript Configuration
 - Root `tsconfig.json` sets base compiler options (ES2022, ESNext modules, strict mode)
 - Workspace tsconfigs extend root config
-- Target: ES2022, Module: ESNext with node resolution
+- Target: ES2022, Module: ESNext with bundler resolution
 
 ### MCP Integration
 The project includes Model Context Protocol (MCP) integration:

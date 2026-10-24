@@ -11,7 +11,7 @@
 		"lint": "biome check .",
 		"format": "biome format . --write",
 		"typecheck": "tsc --noEmit",
-		"build": "npm run build -w @draft/discord-todo-bot",
+		"build": "npm run build --workspaces --if-present",
 		"prepare": "node -e \"process.env.CI ? process.exit(0) : require('child_process').execSync('simple-git-hooks', {stdio: 'inherit'})\""
 	},
 	"simple-git-hooks": {
