@@ -144,9 +144,9 @@
 		"source": "itunes"
 	},
 	"Departures～あなたにおくるアイの歌～||EGOIST": {
-		"year": 2012,
+		"year": 2011,
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "musicbrainz+override"
 	},
 	"Dive [ダイブ]||Ed Sheeran": {
 		"year": 2017,
@@ -239,8 +239,10 @@
 		"source": "itunes"
 	},
 	"Hope Is the Thing With Feathers 翼の生えた希望 [オリカラ](生音)||HOYO-MiX、ロビン、Chevy": {
+		"year": 2024,
+		"genre": "ポップ",
 		"categories": ["邦楽"],
-		"source": "none"
+		"source": "itunes"
 	},
 	"I LOVE...||Official髭男dism": {
 		"year": 2020,
@@ -255,8 +257,10 @@
 		"source": "itunes"
 	},
 	"If I Can Stop One Heart From Breaking 傷つく誰かの心を守ることができたなら [オリカラ](生音)||HOYO-MiX、ロビン、Chevy": {
+		"year": 2024,
+		"genre": "ポップ",
 		"categories": ["邦楽"],
-		"source": "none"
+		"source": "itunes"
 	},
 	"If I Can't Have You (Nipponglish ver.) [イフ・アイ・キャント・ハヴ・ユー]||Shawn Mendes": {
 		"year": 2019,
@@ -664,7 +668,7 @@
 		"source": "itunes"
 	},
 	"You Need Me, I Don't Need You [ユー・ニードゥ・ミー・アイ・ドント・ニードゥ・ユー ]||Ed Sheeran": {
-		"year": 2014,
+		"year": 2011,
 		"genre": "Pop",
 		"categories": ["洋楽"],
 		"source": "itunes"
@@ -706,7 +710,7 @@
 		"source": "itunes"
 	},
 	"from Y to Y||ジミーサムP feat.初音ミク": {
-		"year": 2010,
+		"year": 2009,
 		"genre": "J-Pop",
 		"categories": ["ボカロ", "邦楽"],
 		"source": "itunes+vocadb"
@@ -892,7 +896,7 @@
 		"source": "itunes"
 	},
 	"よだかの星||伊東歌詞太郎": {
-		"year": 2009,
+		"year": 2015,
 		"categories": ["邦楽"],
 		"source": "vocadb"
 	},
@@ -939,9 +943,10 @@
 		"source": "itunes"
 	},
 	"エイリアンズ(Live at The Room)||秦 基博": {
-		"year": 2000,
+		"year": 2010,
+		"genre": "J-Pop",
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "itunes"
 	},
 	"エンゼルフィッシュ||パトリチェフ": {
 		"year": 2021,
@@ -968,7 +973,7 @@
 		"source": "itunes"
 	},
 	"キミボシ||40mP feat.初音ミク": {
-		"year": 2010,
+		"year": 2009,
 		"genre": "ポップ",
 		"categories": ["ボカロ", "邦楽"],
 		"source": "itunes+vocadb"
@@ -1084,7 +1089,7 @@
 		"year": 2010,
 		"genre": "ロック",
 		"categories": ["ボカロ", "邦楽"],
-		"source": "itunes+vocadb"
+		"source": "itunes"
 	},
 	"ソワレ||星街すいせい": {
 		"year": 2022,
@@ -1171,8 +1176,9 @@
 	},
 	"フィナーレ。||eill": {
 		"year": 2022,
+		"genre": "J-Pop",
 		"categories": ["邦楽"],
-		"source": "musicbrainz"
+		"source": "itunes"
 	},
 	"フォニイ feat.可不(KAFU)||ツミキ": {
 		"year": 2021,
@@ -1309,8 +1315,9 @@
 	},
 	"ワールド・コーリング||IA×じん": {
 		"year": 2012,
+		"genre": "ポップ",
 		"categories": ["ボカロ", "邦楽"],
-		"source": "vocadb"
+		"source": "itunes"
 	},
 	"ワールド・ランプシェード||buzzG feat.GUMI": {
 		"year": 2013,
@@ -1319,7 +1326,7 @@
 		"source": "itunes+vocadb"
 	},
 	"不可思議のカルテ||桜島麻衣(CV:瀬戸麻沙美)、古賀朋絵(CV:東山奈央)、双葉理央(CV:種崎敦美)、豊浜のどか(CV:内田真礼)、梓川かえで(CV:久保ユリカ)、牧之原翔子(CV:水瀬いのり)": {
-		"year": 2023,
+		"year": 2018,
 		"genre": "アニメ",
 		"categories": ["アニメ", "邦楽"],
 		"source": "itunes"
@@ -1343,9 +1350,9 @@
 		"source": "itunes"
 	},
 	"丸の内サディスティック||椎名林檎": {
-		"year": 2018,
+		"year": 1999,
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "musicbrainz+override"
 	},
 	"何なんw||藤井 風": {
 		"year": 2019,
@@ -1373,8 +1380,9 @@
 	},
 	"六兆年と一夜物語||kemu feat.IA": {
 		"year": 2012,
-		"categories": ["ボカロ", "邦楽"],
-		"source": "vocadb"
+		"genre": "アニメ",
+		"categories": ["ボカロ", "アニメ", "邦楽"],
+		"source": "itunes+vocadb"
 	},
 	"六道伍感さんぽ||戌亥とこ": {
 		"year": 2023,
@@ -1407,9 +1415,10 @@
 		"source": "itunes"
 	},
 	"君と羊と青(生音)||RADWIMPS": {
-		"year": 2022,
+		"year": 2011,
+		"genre": "ロック",
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "itunes+override"
 	},
 	"君のせい||the peggies": {
 		"year": 2018,
@@ -1429,8 +1438,10 @@
 		"source": "itunes"
 	},
 	"告白予行練習 feat.榎本夏樹(CV:戸松遥)||HoneyWorks": {
+		"year": 2013,
+		"genre": "J-Pop",
 		"categories": ["邦楽"],
-		"source": "none"
+		"source": "itunes"
 	},
 	"声||ウォルピスカーター": {
 		"year": 2017,
@@ -1482,8 +1493,8 @@
 	},
 	"天ノ弱||164 feat.GUMI": {
 		"year": 2011,
-		"genre": "J-Pop",
-		"categories": ["ボカロ", "邦楽"],
+		"genre": "アニメ",
+		"categories": ["ボカロ", "アニメ", "邦楽"],
 		"source": "itunes+vocadb"
 	},
 	"奏(かなで)||スキマスイッチ": {
@@ -1598,7 +1609,7 @@
 		"year": 2012,
 		"genre": "J-Pop",
 		"categories": ["ボカロ", "邦楽"],
-		"source": "itunes+vocadb"
+		"source": "itunes"
 	},
 	"春を告げる - From THE FIRST TAKE||yama": {
 		"year": 2021,
@@ -1647,9 +1658,10 @@
 		"source": "none"
 	},
 	"桜ノ雨||中孝介 feat.伊東歌詞太郎": {
-		"year": 2008,
+		"year": 2013,
+		"genre": "J-Pop",
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "itunes"
 	},
 	"次は、九段下||伊東歌詞太郎": {
 		"year": 2017,
@@ -1718,9 +1730,8 @@
 		"source": "itunes"
 	},
 	"白い雪 (Winter ver.)||優里": {
-		"year": 2013,
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "none"
 	},
 	"真珠色の革命||伊東歌詞太郎": {
 		"year": 2021,
@@ -1741,8 +1752,10 @@
 		"source": "itunes"
 	},
 	"祝祭 feat.三浦透子||RADWIMPS": {
+		"year": 2019,
+		"genre": "ロック",
 		"categories": ["邦楽"],
-		"source": "none"
+		"source": "itunes"
 	},
 	"神のまにまに||れるりり feat.初音ミク、鏡音リン、GUMI": {
 		"year": 2014,
@@ -1774,7 +1787,7 @@
 		"source": "itunes"
 	},
 	"背景、夏に溺れる||n-buna feat.初音ミク": {
-		"year": 2014,
+		"year": 2013,
 		"genre": "アニメ",
 		"categories": ["ボカロ", "アニメ", "邦楽"],
 		"source": "itunes+vocadb"
@@ -1842,7 +1855,7 @@
 	"記憶の水槽||こんにちは谷田さん": {
 		"year": 2017,
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "musicbrainz"
 	},
 	"誰にもなれない私だから||トゲナシトゲアリ": {
 		"year": 2024,
@@ -1854,7 +1867,7 @@
 		"year": 2008,
 		"genre": "ロック",
 		"categories": ["ボカロ", "邦楽"],
-		"source": "itunes+vocadb"
+		"source": "itunes"
 	},
 	"轍～Wadachi～||SPYAIR": {
 		"year": 2021,
@@ -1911,7 +1924,7 @@
 		"source": "itunes"
 	},
 	"雨き声残響||Orangestar feat.IA": {
-		"year": 2015,
+		"year": 2014,
 		"genre": "アニメ",
 		"categories": ["ボカロ", "アニメ", "邦楽"],
 		"source": "itunes+vocadb"
@@ -1935,9 +1948,9 @@
 		"source": "itunes"
 	},
 	"風の日||ELLEGARDEN": {
-		"year": 2013,
+		"year": 2002,
 		"categories": ["邦楽"],
-		"source": "vocadb"
+		"source": "musicbrainz"
 	},
 	"高嶺の花子さん(生音)||back number": {
 		"year": 2013,

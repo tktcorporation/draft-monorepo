@@ -23,7 +23,11 @@ const __dirname = path.dirname(__filename);
  * 既に発表年が入っている曲はキャッシュとして再取得しない。
  * 判定を手直ししたい場合は song-meta-overrides.json に書くと最後に上書きされる。
  *
- * 使い方: npm run enrich
+ * 使い方: npm run enrich（全曲再検証は npm run enrich -- --recheck）
+ *
+ * マッチング方針: 曲名だけで同名の別曲を掴む事故を防ぐため、どのソースでも
+ * 「曲名の一致」に加えて「歌手・アーティストの裏取り」が取れた候補だけを採用する。
+ * 裏取りが取れなければ、その曲は不明として残す（間違った年を付けるより良い）。
  */
 
 interface KaraokeScore {
@@ -70,12 +74,16 @@ const VOCALOID_NAMES = [
 ];
 
 function normalize(text: string): string {
-	return text
+	const withoutBrackets = text.replace(/\[.*?\]/g, "");
+	// "[Alexandros]" のように名前自体が括弧で囲まれている場合は中身を残す
+	const base = withoutBrackets.trim()
+		? withoutBrackets
+		: text.replace(/[[\]]/g, "");
+	return base
 		.normalize("NFKC")
 		.toLowerCase()
 		.replace(/λ/g, "a")
 		.replace(/\(.*?\)/g, "")
-		.replace(/\[.*?\]/g, "")
 		.replace(/[\s\-_~・/\\!！?？:：;；'"”’「」『』]+/g, "");
 }
 
@@ -91,7 +99,9 @@ function searchTitle(title: string): string {
 
 /** feat. や × の前までを主アーティストとして取り出す */
 function primaryArtist(artist: string): string {
-	return artist
+	// "[Alexandros]" のような先頭括弧の名前は中身を名前として扱う
+	const unbracketed = artist.replace(/^\[(.+?)\]/, "$1");
+	return unbracketed
 		.split(/feat\.|×|、|&|\[/)[0]
 		.replace(/（.*?）/g, "")
 		.trim();
@@ -128,25 +138,60 @@ interface ItunesResponse {
 	results?: ItunesResult[];
 }
 
-function itunesCandidateScore(
+/**
+ * 正規化した歌手名同士の一致度: 3=完全一致, 2=包含関係, 0=不一致。
+ * 短すぎる名前は包含判定から除外する（誤爆防止）。
+ */
+function artistOverlap(a: string, b: string): number {
+	if (!a || !b) return 0;
+	if (a === b) return 3;
+	if (a.length >= 2 && b.length >= 2 && (a.includes(b) || b.includes(a))) {
+		return 2;
+	}
+	return 0;
+}
+
+interface CandidateParts {
+	title: number;
+	artist: number;
+	penalty: number;
+	total: number;
+}
+
+/**
+ * iTunes 候補の採点。曲名だけで同名の別曲を掴まないよう、曲名と歌手の
+ * 両方が一定以上一致することを採用条件にする（呼び出し側で判定）。
+ */
+function itunesCandidateParts(
 	result: ItunesResult,
 	title: string,
 	artist: string,
-): number {
+): CandidateParts {
 	const nt = normalize(title);
-	const na = normalize(artist);
 	const rt = normalize(result.trackName ?? "");
+	let titleScore = 0;
+	if (rt === nt) titleScore = 3;
+	else if (rt && nt && (rt.includes(nt) || nt.includes(rt))) titleScore = 2;
+
+	// 歌手はフル表記と主アーティスト表記の両方で比べて良い方を取る
 	const ra = normalize(result.artistName ?? "");
-	let score = 0;
-	if (rt === nt) score += 3;
-	else if (rt.includes(nt) || nt.includes(rt)) score += 2;
-	if (ra === na) score += 3;
-	else if (ra.includes(na) || na.includes(ra)) score += 2;
+	const artistScore = Math.max(
+		artistOverlap(ra, normalize(artist)),
+		artistOverlap(ra, normalize(primaryArtist(artist))),
+	);
+
 	// ライブ盤・ベスト盤は発表年がズレるので避ける
+	let penalty = 0;
 	const blob = `${result.trackName ?? ""} ${result.collectionName ?? ""}`;
-	if (/live|ライブ/i.test(blob)) score -= 3;
-	if (/best|ベスト|greatest/i.test(blob)) score -= 2;
-	return score;
+	if (/live|ライブ/i.test(blob)) penalty -= 3;
+	if (/best|ベスト|greatest/i.test(blob)) penalty -= 2;
+
+	return {
+		title: titleScore,
+		artist: artistScore,
+		penalty,
+		total: titleScore + artistScore + penalty,
+	};
 }
 
 async function searchItunes(
@@ -160,37 +205,34 @@ async function searchItunes(
 		title,
 	];
 	for (const query of queries) {
-		const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&country=${country}&media=music&entity=song&limit=10`;
+		const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&country=${country}&media=music&entity=song&limit=25`;
 		const data = await fetchJson<ItunesResponse>(url);
 		const results = data?.results ?? [];
 		if (results.length === 0) continue;
 
-		let best: ItunesResult | null = null;
-		let bestScore = 0;
-		for (const result of results) {
-			const score = itunesCandidateScore(result, title, artist);
-			if (score > bestScore) {
-				bestScore = score;
-				best = result;
-			}
-		}
-		if (!best || bestScore < 4 || !best.releaseDate) continue;
+		// 採用条件: 曲名・歌手の両方が部分一致以上（同名の別曲を除外する）
+		// ※「歌手名が日本語表記なら通す」例外は設けない。往年の洋楽歌手が
+		// カタカナ表記で載るため、同名曲の別歌手（原曲）を取り込む事故になる
+		const qualified = results
+			.map((result) => ({
+				result,
+				parts: itunesCandidateParts(result, title, artist),
+			}))
+			.filter(
+				({ result, parts }) =>
+					parts.title >= 2 && parts.artist >= 2 && result.releaseDate,
+			);
+		if (qualified.length === 0) continue;
 
-		// ベストマッチと同点で、かつ歌手も一致する候補の中では最古のリリースを
-		// 発表年とする（別アーティストの同名曲を拾わないため歌手一致を必須にする）
-		const na = normalize(artist);
+		qualified.sort((a, b) => b.parts.total - a.parts.total);
+		const best = qualified[0];
+		// ベストと同点の候補の中では最古のリリースを発表年とする
 		const year = Math.min(
-			...results
-				.filter((r) => {
-					if (itunesCandidateScore(r, title, artist) !== bestScore) {
-						return false;
-					}
-					const ra = normalize(r.artistName ?? "");
-					return ra === na || ra.includes(na) || na.includes(ra);
-				})
-				.map((r) => Number(r.releaseDate?.slice(0, 4))),
+			...qualified
+				.filter(({ parts }) => parts.total === best.parts.total)
+				.map(({ result }) => Number(result.releaseDate?.slice(0, 4))),
 		);
-		return { year, genre: best.primaryGenreName };
+		return { year, genre: best.result.primaryGenreName };
 	}
 	return null;
 }
@@ -201,20 +243,54 @@ interface VocaDbEntry {
 	name?: string;
 	publishDate?: string;
 	songType?: string;
+	artistString?: string;
+	artists?: { artist?: { name?: string } }[];
 }
 
 interface VocaDbResponse {
 	items?: VocaDbEntry[];
 }
 
-async function searchVocadb(title: string): Promise<{ year: number } | null> {
+/**
+ * VocaDB エントリの参加アーティストが、DAM 側の歌手表記と符合するか。
+ * 同名の別曲（別P・別歌い手）を掴まないための裏取り。
+ */
+function vocadbCorroborated(entry: VocaDbEntry, artist: string): boolean {
+	const entryNames = (entry.artists ?? [])
+		.map((a) => normalize(a.artist?.name ?? ""))
+		.filter(Boolean);
+	const haystacks = [...entryNames, normalize(entry.artistString ?? "")];
+	if (haystacks.every((h) => !h)) return false;
+
+	const primary = normalize(primaryArtist(artist));
+	if (
+		primary &&
+		haystacks.some((h) => artistOverlap(h, primary) >= 2 || h.includes(primary))
+	) {
+		return true;
+	}
+	// DAM表記に含まれる歌声合成キャラ名が参加アーティストに居れば符合とみなす
+	return VOCALOID_NAMES.filter((name) => artist.includes(name)).some(
+		(name) =>
+			entryNames.some((n) => n.includes(normalize(name))) ||
+			normalize(entry.artistString ?? "").includes(normalize(name)),
+	);
+}
+
+async function searchVocadb(
+	title: string,
+	artist: string,
+): Promise<{ year: number } | null> {
 	const url = `https://vocadb.net/api/songs?query=${encodeURIComponent(title)}&fields=Artists&lang=Japanese&maxResults=10`;
 	const data = await fetchJson<VocaDbResponse>(url);
 	const nt = normalize(title);
-	// 同名のカバー曲が多数あるため、タイトルが完全一致するエントリの中から
-	// Original を優先し、最も古い公開年を採用する
+	// タイトル完全一致 かつ アーティストの裏取りが取れたエントリだけを対象に、
+	// Original を優先して最も古い公開年を採用する（同名の別曲・別カバーを除外）
 	const exact = (data?.items ?? []).filter(
-		(entry) => entry.publishDate && normalize(entry.name ?? "") === nt,
+		(entry) =>
+			entry.publishDate &&
+			normalize(entry.name ?? "") === nt &&
+			vocadbCorroborated(entry, artist),
 	);
 	const originals = exact.filter((entry) => entry.songType === "Original");
 	const pool = originals.length > 0 ? originals : exact;
@@ -232,6 +308,7 @@ interface MbRecording {
 	score?: number;
 	"first-release-date"?: string;
 	tags?: { name: string }[];
+	"artist-credit"?: { name?: string; artist?: { name?: string } }[];
 }
 
 interface MbResponse {
@@ -248,9 +325,19 @@ async function searchMusicBrainz(
 		const data = await fetchJson<MbResponse>(url);
 		if (data) {
 			const nt = normalize(title);
+			const primary = normalize(primaryArtist(artist));
+			const full = normalize(artist);
 			for (const rec of data.recordings ?? []) {
 				if ((rec.score ?? 0) < 85) continue;
 				if (normalize(rec.title ?? "") !== nt) continue;
+				// アーティストクレジットでも裏取りする（同名の別曲を除外）
+				const credits = (rec["artist-credit"] ?? [])
+					.map((c) => normalize(c.name ?? c.artist?.name ?? ""))
+					.filter(Boolean);
+				const corroborated = credits.some(
+					(c) => artistOverlap(c, primary) >= 2 || artistOverlap(c, full) >= 2,
+				);
+				if (!corroborated) continue;
 				const date = rec["first-release-date"];
 				if (!date) continue;
 				return {
@@ -343,7 +430,8 @@ async function main(): Promise<void> {
 	let processed = 0;
 	for (const [key, song] of unique) {
 		const cached = meta[key];
-		if (cached?.year) continue; // 発表年まで取れている曲はキャッシュを使う
+		// 発表年まで取れている曲はキャッシュを使う（--recheck で全曲再検証）
+		if (cached?.year && !process.argv.includes("--recheck")) continue;
 
 		processed++;
 		const title = searchTitle(song.songName);
@@ -365,11 +453,17 @@ async function main(): Promise<void> {
 		}
 
 		if (!year || hasVocaloidMarker(song.songName, song.artist)) {
-			const vocadb = await searchVocadb(title);
+			const vocadb = await searchVocadb(title, song.artist);
 			if (vocadb) {
 				vocadbHit = true;
 				sources.push("vocadb");
-				if (!year) year = vocadb.year;
+				if (!year) {
+					year = vocadb.year;
+				} else if (hasVocaloidMarker(song.songName, song.artist)) {
+					// ボカロ曲は原曲の公開年がその曲の発表年。商業リリースや
+					// リマスターの年より古い方（原曲年）を採用する
+					year = Math.min(year, vocadb.year);
+				}
 			}
 			await sleep(200);
 		}
