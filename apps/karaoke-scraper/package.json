@@ -9,7 +9,8 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"deploy": "npm run build && npx wrangler pages deploy dist"
+		"deploy": "npm run build && npx wrangler pages deploy dist",
+		"enrich": "tsx enrich-meta.ts"
 	},
 	"dependencies": {
 		"playwright": "^1.48.0",

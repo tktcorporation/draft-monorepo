@@ -1,7 +1,7 @@
 import { createStateStore } from "@json-render/core";
 import { JSONUIProvider, Renderer } from "@json-render/react";
 import { useEffect, useMemo, useState } from "react";
-import type { KaraokeScore } from "./ui/catalog";
+import type { KaraokeScore, SongMetaMap } from "./ui/catalog";
 import { functions } from "./ui/functions";
 import { registry } from "./ui/registry";
 import { spec } from "./ui/spec";
@@ -23,6 +23,9 @@ const initialState = {
 	artistSortDirection: "desc",
 	visibleCount: 100,
 	selectedSong: "",
+	meta: {} as SongMetaMap,
+	category: "all",
+	era: "all",
 };
 
 /**
@@ -34,6 +37,25 @@ const initialState = {
  */
 function App() {
 	const store = useState(() => createStateStore(initialState))[0];
+
+	// Song metadata (release year / categories) is optional: the viewer works
+	// without it, the meta filters just stay empty until it loads.
+	useEffect(() => {
+		let cancelled = false;
+		(async () => {
+			try {
+				const response = await fetch("/song-meta.json");
+				if (!response.ok) return;
+				const data: SongMetaMap = await response.json();
+				if (!cancelled) store.set("/meta", data);
+			} catch {
+				// metadata is best-effort
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, [store]);
 
 	useEffect(() => {
 		let cancelled = false;

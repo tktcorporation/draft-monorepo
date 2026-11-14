@@ -26,6 +26,7 @@ import type {
 	ArtistStats,
 	KaraokeScore,
 	RepertoireRow,
+	ScoreRow,
 	SongDetail,
 } from "./catalog";
 
@@ -259,6 +260,33 @@ export const { registry } = defineRegistry(catalog, {
 				name: string;
 				count: number;
 			}[];
+			const categoryOptions = (props.categoryOptions ?? []) as {
+				name: string;
+				count: number;
+			}[];
+
+			const categoryChip = (name: string, label: string, count?: number) => {
+				const on = props.category === name;
+				return (
+					<button
+						key={name}
+						type="button"
+						onClick={() =>
+							store.update({ "/category": name, "/visibleCount": 100 })
+						}
+						className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+							on
+								? "bg-accent text-accent-foreground shadow-sm"
+								: "bg-muted/60 text-muted-foreground hover:bg-muted"
+						}`}
+					>
+						{label}
+						{count !== undefined && (
+							<span className="ml-1.5 opacity-70 tabular-nums">{count}</span>
+						)}
+					</button>
+				);
+			};
 
 			const chip = (name: string, label: string, count: number) => {
 				const on = props.scoringType === name;
@@ -316,6 +344,24 @@ export const { registry } = defineRegistry(catalog, {
 							</select>
 							<select
 								className="px-4 py-2.5 bg-background border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all cursor-pointer"
+								value={props.era}
+								onChange={(e) =>
+									store.update({
+										"/era": e.target.value,
+										"/visibleCount": 100,
+									})
+								}
+								aria-label="曲の年代"
+							>
+								<option value="all">曲の年代：すべて</option>
+								<option value="2020s">2020年代</option>
+								<option value="2010s">2010年代</option>
+								<option value="2000s">2000年代</option>
+								<option value="1990s">1990年代</option>
+								<option value="older">1980年代以前</option>
+							</select>
+							<select
+								className="px-4 py-2.5 bg-background border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all cursor-pointer"
 								value={minScore ?? 0}
 								onChange={(e) => {
 									setMinScore(Number(e.target.value));
@@ -337,6 +383,15 @@ export const { registry } = defineRegistry(catalog, {
 								{props.resultCount}件ヒット
 							</span>
 						</div>
+						{categoryOptions.length > 0 && (
+							<div className="flex items-center gap-2 flex-wrap">
+								<span className="text-xs text-muted-foreground">区分</span>
+								{categoryChip("all", "すべて")}
+								{categoryOptions.map((c) =>
+									categoryChip(c.name, c.name, c.count),
+								)}
+							</div>
+						)}
 					</div>
 				</Panel>
 			);
@@ -344,7 +399,7 @@ export const { registry } = defineRegistry(catalog, {
 
 		ScoreTable: ({ props, emit }) => {
 			const store = useStateStore();
-			const rows = (props.rows ?? []) as KaraokeScore[];
+			const rows = (props.rows ?? []) as ScoreRow[];
 			return (
 				<Panel>
 					{rows.length === 0 ? (
@@ -415,6 +470,11 @@ export const { registry } = defineRegistry(catalog, {
 												</td>
 												<td className="px-4 md:px-6 py-4 text-sm font-medium">
 													{score.songName}
+													{score.metaText && (
+														<span className="block text-xs font-normal text-muted-foreground mt-0.5">
+															{score.metaText}
+														</span>
+													)}
 												</td>
 												<td className="px-4 md:px-6 py-4 text-sm text-muted-foreground">
 													{score.artist}
@@ -513,6 +573,11 @@ export const { registry } = defineRegistry(catalog, {
 														<TypeChip key={t} scoringType={t} />
 													))}
 												</span>
+												{row.metaText && (
+													<span className="block text-xs font-normal text-muted-foreground mt-1">
+														{row.metaText}
+													</span>
+												)}
 											</td>
 											<td className="px-4 md:px-6 py-4 text-sm text-muted-foreground">
 												{row.artist}
@@ -767,6 +832,11 @@ export const { registry } = defineRegistry(catalog, {
 										<TypeChip key={t} scoringType={t} />
 									))}
 								</div>
+								{detail.metaText && (
+									<p className="text-xs text-muted-foreground mt-2">
+										{detail.metaText}
+									</p>
+								)}
 							</div>
 							<button
 								type="button"

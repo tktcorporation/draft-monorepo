@@ -14,6 +14,23 @@ export interface KaraokeScore {
 }
 
 /**
+ * Per-song metadata produced by enrich-meta.ts: release year and genre from
+ * external music databases, plus derived categories
+ * （ボカロ / アニメ / 洋楽 / 邦楽）.
+ */
+export interface SongMeta {
+	year?: number;
+	genre?: string;
+	categories: string[];
+	source: string;
+}
+
+export type SongMetaMap = Record<string, SongMeta>;
+
+/** A score row enriched with its display-only metadata label. */
+export type ScoreRow = KaraokeScore & { metaText: string };
+
+/**
  * Aggregated per-artist statistics.
  */
 export interface ArtistStats {
@@ -37,6 +54,8 @@ export interface RepertoireRow {
 	firstDate?: string;
 	lastDate?: string;
 	types: string[];
+	/** Display label from song metadata, e.g. "2018年 ・ アニメ". */
+	metaText: string;
 }
 
 /**
@@ -78,6 +97,8 @@ export interface SongDetail {
 	avgScore: number;
 	count: number;
 	types: string[];
+	/** Display label from song metadata, e.g. "2018年 ・ アニメ ・ J-Pop". */
+	metaText: string;
 }
 
 /**
@@ -132,6 +153,9 @@ export const catalog = defineCatalog(schema, {
 				typeOptions: z.array(z.any()),
 				resultCount: z.number(),
 				totalCount: z.number(),
+				categoryOptions: z.array(z.any()),
+				category: z.string(),
+				era: z.string(),
 			}),
 		},
 		ScoreTable: {
