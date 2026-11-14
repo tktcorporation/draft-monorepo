@@ -12,11 +12,17 @@ const initialState = {
 	error: "",
 	searchTerm: "",
 	minScore: 0,
+	scoringType: "all",
+	period: "all",
 	viewMode: "songs",
 	sortKey: "score",
 	sortDirection: "desc",
+	repSortKey: "bestScore",
+	repSortDirection: "desc",
 	artistSortKey: "avgScore",
 	artistSortDirection: "desc",
+	visibleCount: 100,
+	selectedSong: "",
 };
 
 /**
@@ -66,7 +72,22 @@ function App() {
 				} else {
 					store.update({
 						"/sortKey": key,
-						"/sortDirection": key === "score" ? "desc" : "asc",
+						"/sortDirection":
+							key === "score" || key === "date" ? "desc" : "asc",
+					});
+				}
+			},
+			sortRepertoire: (params: Record<string, unknown>) => {
+				const key = String(params.key);
+				const current = store.get("/repSortKey");
+				if (current === key) {
+					const dir = store.get("/repSortDirection");
+					store.set("/repSortDirection", dir === "asc" ? "desc" : "asc");
+				} else {
+					store.update({
+						"/repSortKey": key,
+						"/repSortDirection":
+							key === "songName" || key === "artist" ? "asc" : "desc",
 					});
 				}
 			},
