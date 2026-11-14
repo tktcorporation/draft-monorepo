@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -296,11 +297,7 @@ function deriveCategories(params: {
 	const artistAscii = /^[\x20-\x7E\s.&'’-]+$/.test(
 		primaryArtist(params.artist),
 	);
-	if (
-		artistAscii &&
-		params.genre &&
-		!JAPANESE_GENRES.has(params.genre)
-	) {
+	if (artistAscii && params.genre && !JAPANESE_GENRES.has(params.genre)) {
 		categories.add("洋楽");
 	} else {
 		categories.add("邦楽");
@@ -420,9 +417,18 @@ async function main(): Promise<void> {
 	for (const key of Array.from(unique.keys()).sort()) {
 		if (meta[key]) ordered[key] = meta[key];
 	}
-	const out = `${JSON.stringify(ordered, null, 2)}\n`;
+	// Biome の整形（タブインデント）に合わせて出力する
+	const out = `${JSON.stringify(ordered, null, "\t")}\n`;
 	await fs.writeFile(metaPath, out, "utf-8");
 	await fs.writeFile(publicMetaPath, out, "utf-8");
+	// リポジトリの整形ルール（Biome）に合わせておく
+	try {
+		execSync(`npx biome format --write "${metaPath}" "${publicMetaPath}"`, {
+			stdio: "ignore",
+		});
+	} catch {
+		console.warn("Biome formatting skipped (biome not available)");
+	}
 
 	const withYear = Object.values(ordered).filter((m) => m.year).length;
 	const byCategory = new Map<string, number>();
