@@ -1,5 +1,19 @@
 [
 	{
+		"songName": "アストロ",
+		"artist": "buzzG feat.伊東歌詞太郎",
+		"score": 94.355,
+		"date": "2026/08/30 17:56",
+		"scoringType": "精密採点DX-G"
+	},
+	{
+		"songName": "ベテルギウス(生音)",
+		"artist": "優里",
+		"score": 94.124,
+		"date": "2026/08/30 18:23",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "青と夏(生音)",
 		"artist": "Mrs. GREEN APPLE",
 		"score": 94.067,
@@ -56,6 +70,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "レプリカ feat.IKE",
+		"artist": "BAK",
+		"score": 92.235,
+		"date": "2026/08/30 18:28",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "よだかの星",
 		"artist": "伊東歌詞太郎",
 		"score": 92.115,
@@ -77,11 +98,25 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Pretender",
+		"artist": "Official髭男dism",
+		"score": 91.953,
+		"date": "2026/04/26 11:47",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "Lemon",
 		"artist": "米津玄師",
 		"score": 91.881,
 		"date": "2025/11/15 11:51",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "憂、燦々(生音)",
+		"artist": "クリープハイプ",
+		"score": 91.861,
+		"date": "2026/09/08 12:22",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "115万キロのフィルム(生音)",
@@ -203,6 +238,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Perfect [パーフェクト](生音)",
+		"artist": "Ed Sheeran",
+		"score": 91.27,
+		"date": "2026/04/15 15:23",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "白い雪 (Winter ver.)",
 		"artist": "優里",
 		"score": 91.199,
@@ -236,6 +278,13 @@
 		"score": 91.151,
 		"date": "2025/11/15 12:01",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "sailing day(生音)",
+		"artist": "BUMP OF CHICKEN",
+		"score": 91.148,
+		"date": "2026/04/26 12:23",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "I LOVE...",
@@ -336,6 +385,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Drawing days",
+		"artist": "SPLAY",
+		"score": 90.737,
+		"date": "2026/08/30 18:15",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "ヒーローマスク",
 		"artist": "伊東歌詞太郎",
 		"score": 90.722,
@@ -390,6 +446,13 @@
 		"score": 90.459,
 		"date": "2025/10/21 23:22",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "ray(生音)",
+		"artist": "BUMP OF CHICKEN",
+		"score": 90.445,
+		"date": "2026/04/26 12:17",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "ワタリドリ",
@@ -455,11 +518,25 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "lulu.",
+		"artist": "Mrs. GREEN APPLE",
+		"score": 90.246,
+		"date": "2026/04/15 15:37",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "プラットホーム",
 		"artist": "Mashumairesh!![Vo&Gt.ほわん(遠野ひかる)、Vo&Gt.マシマヒメコ(夏吉ゆうこ)、Vo&Ba.デルミン(和多田美咲)、Vo&Dr.ルフユ(山根綺)]",
 		"score": 90.24,
 		"date": "2025/07/09 12:51",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "深呼吸",
+		"artist": "ハナレグミ",
+		"score": 90.233,
+		"date": "2026/08/30 17:39",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Fairytale,",
@@ -567,11 +644,25 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Stitches [スティッチズ]",
+		"artist": "Shawn Mendes",
+		"score": 89.855,
+		"date": "2026/04/15 14:45",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "レオ",
 		"artist": "優里",
 		"score": 89.842,
 		"date": "2025/12/06 01:36",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "Eyes Closed [アイズ・クローズド]",
+		"artist": "Ed Sheeran",
+		"score": 89.798,
+		"date": "2026/09/08 11:52",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Visiting Hours [ヴィジティング・アワーズ]",
@@ -665,6 +756,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Azizam [アジザム]",
+		"artist": "Ed Sheeran",
+		"score": 89.348,
+		"date": "2026/09/08 11:48",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "花束",
 		"artist": "back number",
 		"score": 89.343,
@@ -677,6 +775,13 @@
 		"score": 89.339,
 		"date": "2025/08/02 23:28",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "There's Nothing Holdin' Me Back (Nipponglish ver.) [ゼアズ・ナッシング・ホールディン・ミー・バック]",
+		"artist": "Shawn Mendes",
+		"score": 89.327,
+		"date": "2026/04/15 14:36",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "気まぐれロマンティック(生音)",
@@ -747,6 +852,13 @@
 		"score": 89.166,
 		"date": "2025/10/21 22:59",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "If I Can't Have You (Nipponglish ver.) [イフ・アイ・キャント・ハヴ・ユー]",
+		"artist": "Shawn Mendes",
+		"score": 89.153,
+		"date": "2026/04/15 14:41",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Stellar Stellar",
@@ -959,6 +1071,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "To see the future",
+		"artist": "レン starring 楠木ともり",
+		"score": 88.444,
+		"date": "2026/04/26 12:28",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "夏夜のマジック",
 		"artist": "indigo la End",
 		"score": 88.43,
@@ -1020,6 +1139,13 @@
 		"score": 88.321,
 		"date": "2025/11/02 17:20",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "センチメントリバース",
+		"artist": "りぶ",
+		"score": 88.274,
+		"date": "2026/09/08 12:53",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "グランドエスケープ feat.三浦透子",
@@ -1118,6 +1244,13 @@
 		"score": 87.982,
 		"date": "2025/09/13 01:47",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "Together",
+		"artist": "あきよしふみえ",
+		"score": 87.976,
+		"date": "2026/08/30 18:02",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "フィナーレ。",
@@ -1288,6 +1421,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "HELP!!",
+		"artist": "Kobo Kanaeru",
+		"score": 87.466,
+		"date": "2026/04/15 15:56",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "君と羊と青(生音)",
 		"artist": "RADWIMPS",
 		"score": 87.455,
@@ -1435,6 +1575,20 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "家族の風景",
+		"artist": "ハナレグミ",
+		"score": 86.955,
+		"date": "2026/08/30 17:43",
+		"scoringType": "精密採点DX-G"
+	},
+	{
+		"songName": "夜を待つよ",
+		"artist": "Midnight Grand Orchestra",
+		"score": 86.955,
+		"date": "2026/04/15 15:44",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "春を告げる - From THE FIRST TAKE",
 		"artist": "yama",
 		"score": 86.954,
@@ -1449,6 +1603,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "ルーマー",
+		"artist": "ポリスピカデリー",
+		"score": 86.947,
+		"date": "2026/09/08 12:40",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "Try add",
 		"artist": "Nornis",
 		"score": 86.906,
@@ -1461,6 +1622,13 @@
 		"score": 86.889,
 		"date": "2025/09/13 01:18",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "ソワレ",
+		"artist": "星街すいせい",
+		"score": 86.856,
+		"date": "2026/04/15 14:57",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "水平線(生音)",
@@ -1575,6 +1743,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "犬かキャットかで死ぬまで喧嘩しよう!",
+		"artist": "Official髭男dism",
+		"score": 86.482,
+		"date": "2026/09/08 12:08",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "インフィニティ",
 		"artist": "優里",
 		"score": 86.438,
@@ -1601,6 +1776,13 @@
 		"score": 86.335,
 		"date": "2025/10/04 23:17",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "おやすみ泣き声、さよなら歌姫",
+		"artist": "クリープハイプ",
+		"score": 86.265,
+		"date": "2026/09/08 12:17",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Everything Has Changed featuring Ed Sheeran [エヴリシング・ハズ・チェンジド]",
@@ -1743,6 +1925,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Sapphire [サファイア]",
+		"artist": "Ed Sheeran",
+		"score": 85.792,
+		"date": "2026/09/08 11:56",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "忘れてやらない(生音)",
 		"artist": "結束バンド",
 		"score": 85.777,
@@ -1827,6 +2016,20 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "月に向かって撃て",
+		"artist": "星街すいせい",
+		"score": 85.415,
+		"date": "2026/04/15 14:50",
+		"scoringType": "精密採点DX-G"
+	},
+	{
+		"songName": "ビビデバ",
+		"artist": "星街すいせい",
+		"score": 85.41,
+		"date": "2026/04/26 12:34",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "シャッター",
 		"artist": "優里",
 		"score": 85.359,
@@ -1846,6 +2049,13 @@
 		"score": 85.301,
 		"date": "2025/08/26 01:22",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "音タイム",
+		"artist": "ハナレグミ",
+		"score": 85.257,
+		"date": "2026/08/30 17:49",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "American Town [アメリカン・タウン]",
@@ -1869,11 +2079,25 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "忘れてやらない(生音)",
+		"artist": "結束バンド",
+		"score": 85.187,
+		"date": "2026/04/26 12:39",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "メリュー",
 		"artist": "ウォルピスカーター",
 		"score": 85.168,
 		"date": "2025/08/02 23:05",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "ホウキ雲",
+		"artist": "RYTHEM",
+		"score": 85.166,
+		"date": "2026/08/30 18:09",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "六兆年と一夜物語",
@@ -1909,6 +2133,13 @@
 		"score": 85.006,
 		"date": "2025/10/04 23:40",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "金木犀 feat.Ado",
+		"artist": "くじら",
+		"score": 84.939,
+		"date": "2026/09/08 12:59",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "若者のすべて(生音)",
@@ -2086,6 +2317,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "曖昧さ回避",
+		"artist": "ポリスピカデリー",
+		"score": 83.932,
+		"date": "2026/04/26 11:58",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "Someday [サムデイ]",
 		"artist": "OneRepublic",
 		"score": 83.901,
@@ -2128,6 +2366,13 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "Drive [ドライヴ]",
+		"artist": "Ed Sheeran",
+		"score": 83.734,
+		"date": "2026/04/15 15:16",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "A Little More [ア・リトル・モア]",
 		"artist": "Ed Sheeran",
 		"score": 83.731,
@@ -2168,6 +2413,13 @@
 		"score": 83.571,
 		"date": "2025/10/18 16:11",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "春を告げる",
+		"artist": "yama",
+		"score": 83.547,
+		"date": "2026/04/26 12:11",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Take Me Back To London feat. Stormzy [テイク・ミー・バック・トゥ・ロンドン]",
@@ -2219,6 +2471,20 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "LADY",
+		"artist": "Official髭男dism",
+		"score": 83.153,
+		"date": "2026/09/08 12:02",
+		"scoringType": "精密採点DX-G"
+	},
+	{
+		"songName": "2002 [2002]",
+		"artist": "Anne-Marie",
+		"score": 83.153,
+		"date": "2026/04/26 12:05",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "オーバーシーズ・ハイウェイ",
 		"artist": "ウォルピスカーター",
 		"score": 83.132,
@@ -2259,6 +2525,13 @@
 		"score": 82.975,
 		"date": "2025/10/21 23:05",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "抜錨",
+		"artist": "ナナホシ管弦楽団 feat.巡音ルカ",
+		"score": 82.894,
+		"date": "2026/04/15 15:02",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "夜桜 feat.めいちゃん",
@@ -2373,11 +2646,25 @@
 		"scoringType": "精密採点Ai"
 	},
 	{
+		"songName": "quiz",
+		"artist": "花譜",
+		"score": 81.518,
+		"date": "2026/09/08 13:08",
+		"scoringType": "精密採点DX-G"
+	},
+	{
 		"songName": "名もなき何もかも (Live at clubrockhearts edit)",
 		"artist": "トゲナシトゲアリ",
 		"score": 81.475,
 		"date": "2025/10/21 20:55",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "君色に染まる",
+		"artist": "TOKOTOKO(西沢さんP)",
+		"score": 81.37,
+		"date": "2026/09/08 12:49",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Try add",
@@ -2490,6 +2777,13 @@
 		"score": 79.341,
 		"date": "2025/07/27 01:20",
 		"scoringType": "精密採点Ai"
+	},
+	{
+		"songName": "花になって(TVアニメ『薬屋のひとりごと』バージョン)",
+		"artist": "緑黄色社会",
+		"score": 79.089,
+		"date": "2026/04/15 15:07",
+		"scoringType": "精密採点DX-G"
 	},
 	{
 		"songName": "Dancing On My Own [ダンシング・オン・マイ・オウン]",
