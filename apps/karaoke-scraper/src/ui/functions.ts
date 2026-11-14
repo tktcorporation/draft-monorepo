@@ -133,7 +133,7 @@ const filteredCount: ComputedFunction = (args) => {
 
 /** How many rows the history table actually shows (filtered count capped by the display limit). */
 const shownCount: ComputedFunction = (args) => {
-	const total = filteredCount(args);
+	const total = Number(filteredCount(args));
 	return Math.min(total, Number(args.limit ?? 100));
 };
 
