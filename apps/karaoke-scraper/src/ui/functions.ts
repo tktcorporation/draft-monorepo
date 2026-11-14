@@ -5,6 +5,7 @@ import type {
 	KaraokeScore,
 	RepertoireRow,
 	SongDetail,
+	SongMetaMap,
 	TypeStats,
 } from "./catalog";
 
@@ -15,10 +16,20 @@ interface FilterSet {
 	minScore: number;
 	scoringType: string;
 	period: string;
+	meta: SongMetaMap;
+	category: string;
+	era: string;
 }
 
 function asScores(value: unknown): KaraokeScore[] {
 	return Array.isArray(value) ? (value as KaraokeScore[]) : [];
+}
+
+function asMetaMap(value: unknown): SongMetaMap {
+	if (value && typeof value === "object" && !Array.isArray(value)) {
+		return value as SongMetaMap;
+	}
+	return {};
 }
 
 function readFilters(args: Record<string, unknown>): FilterSet {
@@ -27,7 +38,49 @@ function readFilters(args: Record<string, unknown>): FilterSet {
 		minScore: Number(args.minScore ?? 0),
 		scoringType: String(args.scoringType ?? "all"),
 		period: String(args.period ?? "all"),
+		meta: asMetaMap(args.meta),
+		category: String(args.category ?? "all"),
+		era: String(args.era ?? "all"),
 	};
+}
+
+/** Display label from a song's metadata, e.g. "2018年 ・ アニメ ・ J-Pop". */
+function metaTextForKey(meta: SongMetaMap, key: string): string {
+	const entry = meta[key];
+	if (!entry) return "";
+	const parts: string[] = [];
+	if (entry.year) parts.push(`${entry.year}年`);
+	parts.push(...entry.categories);
+	if (entry.genre && !entry.categories.includes(entry.genre)) {
+		parts.push(entry.genre);
+	}
+	return parts.join(" ・ ");
+}
+
+function metaText(meta: SongMetaMap, score: KaraokeScore): string {
+	return metaTextForKey(meta, `${score.songName}||${score.artist}`);
+}
+
+const ERA_RANGES: Record<string, [number, number]> = {
+	"2020s": [2020, 2029],
+	"2010s": [2010, 2019],
+	"2000s": [2000, 2009],
+	"1990s": [1990, 1999],
+	older: [0, 1989],
+};
+
+/** Category （区分） and release-era （年代） filters, driven by song metadata. */
+function matchesMeta(score: KaraokeScore, filters: FilterSet): boolean {
+	const entry = filters.meta[`${score.songName}||${score.artist}`];
+	if (filters.category !== "all") {
+		if (!entry || !entry.categories.includes(filters.category)) return false;
+	}
+	if (filters.era !== "all") {
+		const range = ERA_RANGES[filters.era];
+		if (!range || !entry?.year) return false;
+		if (entry.year < range[0] || entry.year > range[1]) return false;
+	}
+	return true;
 }
 
 /** Normalize for search: case-fold and unify full/half-width characters. */
@@ -93,7 +146,8 @@ function filterAttempts(
 		(s) =>
 			matchesSearch(s, filters.searchTerm) &&
 			matchesType(s, filters.scoringType) &&
-			matchesPeriod(s, filters.period),
+			matchesPeriod(s, filters.period) &&
+			matchesMeta(s, filters),
 	);
 }
 
@@ -120,7 +174,8 @@ const visibleScores: ComputedFunction = (args) => {
 	return filterAttempts(asScores(args.scores), filters)
 		.filter((s) => s.score >= filters.minScore)
 		.sort((a, b) => compare(a[sortKey], b[sortKey], direction))
-		.slice(0, limit);
+		.slice(0, limit)
+		.map((s) => ({ ...s, metaText: metaText(filters.meta, s) }));
 };
 
 /** Number of attempts surviving the full filter set (before display limit). */
@@ -211,6 +266,7 @@ const repertoireRows: ComputedFunction = (args) => {
 				firstDate: score.date,
 				lastDate: score.date,
 				types: [score.scoringType],
+				metaText: "",
 				sum: score.score,
 			});
 		}
@@ -220,6 +276,7 @@ const repertoireRows: ComputedFunction = (args) => {
 		.map(({ sum, ...row }) => ({
 			...row,
 			avgScore: sum / row.attempts,
+			metaText: metaTextForKey(filters.meta, `${row.songName}||${row.artist}`),
 		}))
 		.filter((row) => row.bestScore >= filters.minScore)
 		.sort((a, b) => compare(a[sortKey], b[sortKey], direction));
@@ -339,6 +396,7 @@ const songDetail: ComputedFunction = (args): SongDetail | null => {
 		avgScore: attempts.reduce((sum, s) => sum + s.score, 0) / attempts.length,
 		count: attempts.length,
 		types: Array.from(new Set(attempts.map((s) => s.scoringType))),
+		metaText: metaTextForKey(asMetaMap(args.meta), key),
 	};
 };
 
@@ -370,6 +428,24 @@ const subtitleText: ComputedFunction = (args) => {
 	return `全${scores.length}件の採点データ・${songs}曲`;
 };
 
+const CATEGORY_ORDER = ["ボカロ", "アニメ", "洋楽", "邦楽"];
+
+/** Attempt counts per metadata category, for the filter chips. */
+const categoryOptions: ComputedFunction = (args) => {
+	const meta = asMetaMap(args.meta);
+	const counts = new Map<string, number>();
+	for (const score of asScores(args.scores)) {
+		const entry = meta[`${score.songName}||${score.artist}`];
+		for (const category of entry?.categories ?? []) {
+			counts.set(category, (counts.get(category) ?? 0) + 1);
+		}
+	}
+	return CATEGORY_ORDER.filter((name) => counts.has(name)).map((name) => ({
+		name,
+		count: counts.get(name) ?? 0,
+	}));
+};
+
 /**
  * Named functions available to `$computed` prop expressions in the spec.
  */
@@ -379,6 +455,7 @@ export const functions = {
 	shownCount,
 	statValue,
 	typeOptions,
+	categoryOptions,
 	repertoireRows,
 	artistRows,
 	analysisData,

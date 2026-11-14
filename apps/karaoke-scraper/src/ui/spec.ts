@@ -20,6 +20,9 @@ const filterArgs = {
 	minScore: { $state: "/minScore" },
 	scoringType: { $state: "/scoringType" },
 	period: { $state: "/period" },
+	meta: { $state: "/meta" },
+	category: { $state: "/category" },
+	era: { $state: "/era" },
 };
 
 const inView = (mode: string): SingleCondition[] => [
@@ -184,6 +187,15 @@ export const spec: Spec = {
 						field: "total",
 					},
 				},
+				categoryOptions: {
+					$computed: "categoryOptions",
+					args: {
+						scores: { $state: "/scores" },
+						meta: { $state: "/meta" },
+					},
+				},
+				category: { $state: "/category" },
+				era: { $state: "/era" },
 			},
 			visible: whenFilterable,
 		},
@@ -304,6 +316,7 @@ export const spec: Spec = {
 					args: {
 						scores: { $state: "/scores" },
 						selectedKey: { $state: "/selectedSong" },
+						meta: { $state: "/meta" },
 					},
 				},
 			},
