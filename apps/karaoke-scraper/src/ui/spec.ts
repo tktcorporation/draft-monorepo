@@ -18,7 +18,20 @@ const filterArgs = {
 	scores: { $state: "/scores" },
 	searchTerm: { $state: "/searchTerm" },
 	minScore: { $state: "/minScore" },
+	scoringType: { $state: "/scoringType" },
+	period: { $state: "/period" },
 };
+
+const inView = (mode: string): SingleCondition[] => [
+	...whenReady,
+	{ $state: "/viewMode", eq: mode },
+];
+
+/** Filter bar applies to the three list views (not to analysis). */
+const whenFilterable: SingleCondition[] = [
+	...whenReady,
+	{ $state: "/viewMode", neq: "analysis" },
+];
 
 /**
  * The entire karaoke viewer as a json-render spec. Every node references a
@@ -37,9 +50,13 @@ export const spec: Spec = {
 				"header",
 				"viewToggle",
 				"statGrid",
-				"toolbar",
+				"filterBar",
 				"songsTable",
+				"showMore",
+				"repertoireTable",
 				"artistsTable",
+				"analysisPanel",
+				"songDetailModal",
 				"footer",
 			],
 		},
@@ -76,7 +93,15 @@ export const spec: Spec = {
 			props: { value: { $state: "/viewMode" } },
 			on: {
 				selectSongs: { action: "setViewMode", params: { mode: "songs" } },
+				selectRepertoire: {
+					action: "setViewMode",
+					params: { mode: "repertoire" },
+				},
 				selectArtists: { action: "setViewMode", params: { mode: "artists" } },
+				selectAnalysis: {
+					action: "setViewMode",
+					params: { mode: "analysis" },
+				},
 			},
 			visible: whenReady,
 		},
@@ -84,17 +109,28 @@ export const spec: Spec = {
 		statGrid: {
 			type: "StatGrid",
 			props: {},
-			children: ["statTotal", "statAvg", "statMax"],
+			children: ["statTotal", "statUnique", "statAvg", "statMax"],
 			visible: whenReady,
 		},
 		statTotal: {
 			type: "StatCard",
 			props: {
-				label: "総曲数",
+				label: "総件数",
 				tone: "blue",
 				value: {
 					$computed: "statValue",
 					args: { ...filterArgs, field: "total" },
+				},
+			},
+		},
+		statUnique: {
+			type: "StatCard",
+			props: {
+				label: "歌った曲数",
+				tone: "amber",
+				value: {
+					$computed: "statValue",
+					args: { ...filterArgs, field: "unique" },
 				},
 			},
 		},
@@ -121,14 +157,35 @@ export const spec: Spec = {
 			},
 		},
 
-		toolbar: {
-			type: "Toolbar",
+		filterBar: {
+			type: "FilterBar",
 			props: {
 				searchValue: { $bindState: "/searchTerm" },
-				searchPlaceholder: "曲名または歌手名で検索",
+				searchPlaceholder: "曲名・歌手名で検索（スペースで複数キーワード）",
 				minScore: { $bindState: "/minScore" },
+				scoringType: { $state: "/scoringType" },
+				period: { $state: "/period" },
+				typeOptions: {
+					$computed: "typeOptions",
+					args: { scores: { $state: "/scores" } },
+				},
+				resultCount: {
+					$computed: "filteredCount",
+					args: filterArgs,
+				},
+				totalCount: {
+					$computed: "statValue",
+					args: {
+						scores: { $state: "/scores" },
+						searchTerm: "",
+						minScore: 0,
+						scoringType: "all",
+						period: "all",
+						field: "total",
+					},
+				},
 			},
-			visible: whenReady,
+			visible: whenFilterable,
 		},
 
 		songsTable: {
@@ -140,6 +197,7 @@ export const spec: Spec = {
 						...filterArgs,
 						sortKey: { $state: "/sortKey" },
 						sortDirection: { $state: "/sortDirection" },
+						limit: { $state: "/visibleCount" },
 					},
 				},
 				sortKey: { $state: "/sortKey" },
@@ -147,11 +205,60 @@ export const spec: Spec = {
 				emptyText: "検索条件に一致するデータがありません",
 			},
 			on: {
+				sortDate: { action: "sortScores", params: { key: "date" } },
 				sortSongName: { action: "sortScores", params: { key: "songName" } },
 				sortArtist: { action: "sortScores", params: { key: "artist" } },
+				sortType: { action: "sortScores", params: { key: "scoringType" } },
 				sortScore: { action: "sortScores", params: { key: "score" } },
 			},
-			visible: [...whenReady, { $state: "/viewMode", eq: "songs" }],
+			visible: inView("songs"),
+		},
+
+		showMore: {
+			type: "ShowMore",
+			props: {
+				shown: {
+					$computed: "shownCount",
+					args: { ...filterArgs, limit: { $state: "/visibleCount" } },
+				},
+				total: {
+					$computed: "filteredCount",
+					args: filterArgs,
+				},
+			},
+			visible: inView("songs"),
+		},
+
+		repertoireTable: {
+			type: "RepertoireTable",
+			props: {
+				rows: {
+					$computed: "repertoireRows",
+					args: {
+						...filterArgs,
+						sortKey: { $state: "/repSortKey" },
+						sortDirection: { $state: "/repSortDirection" },
+					},
+				},
+				sortKey: { $state: "/repSortKey" },
+				sortDirection: { $state: "/repSortDirection" },
+				emptyText: "条件に一致する曲がありません",
+			},
+			on: {
+				sortSongName: {
+					action: "sortRepertoire",
+					params: { key: "songName" },
+				},
+				sortArtist: { action: "sortRepertoire", params: { key: "artist" } },
+				sortBest: { action: "sortRepertoire", params: { key: "bestScore" } },
+				sortAvg: { action: "sortRepertoire", params: { key: "avgScore" } },
+				sortAttempts: {
+					action: "sortRepertoire",
+					params: { key: "attempts" },
+				},
+				sortLast: { action: "sortRepertoire", params: { key: "lastDate" } },
+			},
+			visible: inView("repertoire"),
 		},
 
 		artistsTable: {
@@ -160,7 +267,7 @@ export const spec: Spec = {
 				rows: {
 					$computed: "artistRows",
 					args: {
-						scores: { $state: "/scores" },
+						...filterArgs,
 						sortKey: { $state: "/artistSortKey" },
 						sortDirection: { $state: "/artistSortDirection" },
 					},
@@ -175,7 +282,32 @@ export const spec: Spec = {
 				sortMaxScore: { action: "sortArtists", params: { key: "maxScore" } },
 				sortMinScore: { action: "sortArtists", params: { key: "minScore" } },
 			},
-			visible: [...whenReady, { $state: "/viewMode", eq: "artists" }],
+			visible: inView("artists"),
+		},
+
+		analysisPanel: {
+			type: "AnalysisPanel",
+			props: {
+				data: {
+					$computed: "analysisData",
+					args: { scores: { $state: "/scores" } },
+				},
+			},
+			visible: inView("analysis"),
+		},
+
+		songDetailModal: {
+			type: "SongDetailModal",
+			props: {
+				detail: {
+					$computed: "songDetail",
+					args: {
+						scores: { $state: "/scores" },
+						selectedKey: { $state: "/selectedSong" },
+					},
+				},
+			},
+			visible: [{ $state: "/selectedSong" }],
 		},
 
 		footer: {
