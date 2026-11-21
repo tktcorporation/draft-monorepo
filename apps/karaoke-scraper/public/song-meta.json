@@ -495,6 +495,12 @@
 		"categories": ["洋楽"],
 		"source": "itunes"
 	},
+	"Subtitle||Official髭男dism": {
+		"year": 2022,
+		"genre": "J-Pop",
+		"categories": ["邦楽"],
+		"source": "itunes"
+	},
 	"Sway to My Beat in Cosmos 銀河を独り揺蕩う [オリカラ](生音)||HOYO-MiX、ロビン、Chevy": {
 		"year": 2024,
 		"genre": "ポップ",
@@ -601,6 +607,12 @@
 		"categories": ["アニメ", "邦楽"],
 		"source": "itunes"
 	},
+	"Universe||Official髭男dism": {
+		"year": 2021,
+		"genre": "J-Pop",
+		"categories": ["邦楽"],
+		"source": "itunes"
+	},
 	"Uptown Funk feat. Bruno Mars (Nipponglish ver.) [アップタウン・ファンク]||Mark Ronson": {
 		"year": 2014,
 		"genre": "Pop",
@@ -673,10 +685,28 @@
 		"categories": ["洋楽"],
 		"source": "itunes"
 	},
+	"[生音]UNION(ANIMAX MUSIX 2018 YOKOHAMA)||OxT": {
+		"year": 2018,
+		"genre": "アニメ",
+		"categories": ["アニメ", "邦楽"],
+		"source": "itunes"
+	},
+	"[生音]オトモダチフィルム(Animelo Summer Live 2018 \"OK!\")||オーイシマサヨシ": {
+		"year": 2018,
+		"genre": "アニメ",
+		"categories": ["アニメ", "邦楽"],
+		"source": "itunes"
+	},
 	"[生音]サヨナラバス||ゆず": {
 		"year": 1999,
 		"genre": "J-Pop",
 		"categories": ["邦楽"],
+		"source": "itunes"
+	},
+	"[生音]君じゃなきゃダメみたい(Animelo Summer Live 2015 -THE GATE-Ver.)||オーイシマサヨシ": {
+		"year": 2014,
+		"genre": "アニメ",
+		"categories": ["アニメ", "邦楽"],
 		"source": "itunes"
 	},
 	"[生音]空も飛べるはず||スピッツ": {
@@ -754,6 +784,12 @@
 	"soFt-dRink||Mrs. GREEN APPLE": {
 		"year": 2017,
 		"genre": "ロック",
+		"categories": ["邦楽"],
+		"source": "itunes"
+	},
+	"uni-verse||オーイシマサヨシ": {
+		"year": 2023,
+		"genre": "J-Pop",
 		"categories": ["邦楽"],
 		"source": "itunes"
 	},
@@ -1156,6 +1192,12 @@
 		"categories": ["邦楽"],
 		"source": "itunes"
 	},
+	"パラボラ||Official髭男dism": {
+		"year": 2020,
+		"genre": "J-Pop",
+		"categories": ["邦楽"],
+		"source": "itunes"
+	},
 	"ヒーローマスク||伊東歌詞太郎": {
 		"year": 2013,
 		"genre": "J-Pop",
@@ -1521,6 +1563,12 @@
 		"categories": ["洋楽"],
 		"source": "itunes"
 	},
+	"少女レイ||みきとP": {
+		"year": 2018,
+		"genre": "アニメ",
+		"categories": ["アニメ", "邦楽"],
+		"source": "itunes"
+	},
 	"帰り路||花譜": {
 		"year": 2020,
 		"genre": "J-Pop",
@@ -1730,8 +1778,9 @@
 		"source": "itunes"
 	},
 	"白い雪 (Winter ver.)||優里": {
+		"year": 2013,
 		"categories": ["邦楽"],
-		"source": "none"
+		"source": "vocadb"
 	},
 	"真珠色の革命||伊東歌詞太郎": {
 		"year": 2021,
